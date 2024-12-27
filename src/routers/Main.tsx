@@ -1,5 +1,7 @@
 import OnOff from "components/OnOff";
 import React, { useState } from "react";
+import Calender from "components/Calender";
+import Settings from "components/Settings";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -13,6 +15,10 @@ const Main: React.FC = () => {
   return (
     <Container>
       <OnOff isOnline={isOnline} setIsOnline={setIsOnline} />
+      <div>
+        <Calender />
+        <Settings />
+      </div>
     </Container>
   );
 };
