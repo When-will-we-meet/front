@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import RightArrow from "../assets/icon_right_arrow.svg";
+import { useNavigate } from "react-router-dom";
 
 const Container = styled.div`
   background: #fff;
@@ -142,6 +143,7 @@ interface SettingsProps {
 }
 
 const Settings: React.FC<SettingsProps> = ({ selectedDay, isOnline }) => {
+  const navigate = useNavigate();
   const [startTime, setStartTime] = useState<number>(6);
   const [exitTime, setExitTime] = useState<number>(6);
   const [responder, setResponder] = useState<number>(2);
@@ -202,23 +204,8 @@ const Settings: React.FC<SettingsProps> = ({ selectedDay, isOnline }) => {
   }
 
   function handleValidInspection() {
-    if (title && responder > 0 && exitTime - startTime > 0) {
-      alert(
-        "회의가 생성되었습니다 : " +
-          title +
-          " " +
-          responder +
-          " " +
-          startTime +
-          " " +
-          exitTime +
-          " " +
-          content +
-          " " +
-          selectedDay +
-          " " +
-          isOnline
-      );
+    if (title && responder > 0 && exitTime - startTime > 0 && selectedDay) {
+      navigate("/conference");
     } else {
       alert("잘못되었습니다");
     }
