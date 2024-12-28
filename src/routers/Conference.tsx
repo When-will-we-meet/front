@@ -1,3 +1,4 @@
+import SelectTime from "components/SelectTime";
 import React, { useState } from "react";
 import styled from "styled-components";
 
@@ -71,11 +72,12 @@ const Button = styled.button`
 `;
 
 const MostOfTime = styled.div`
-  width: 1000px;
+  width: 850px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding-left: 100px;
 `;
 
 const MostOfTimeText = styled.p`
@@ -99,11 +101,50 @@ const Time = styled.p`
   margin: 15px 0 0 0;
 `;
 
+const Responder = styled.div`
+  width: 850px;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-left: 100px;
+`;
+
+const ResponderText = styled.p`
+  color: #717171;
+  text-align: center;
+  font-family: Inter;
+  font-size: 25px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+`;
+
+const ResponderName = styled.p`
+  color: #000;
+  text-align: center;
+  font-family: Inter;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin: 15px 0 0 0;
+`;
+
 const Conference: React.FC = () => {
   const max_respond_time: Record<number, string[]> = {
     24: ["09 : 00 ~ 10 : 00", "10 : 00 ~ 11 : 00"],
     26: ["19 : 00 ~ 20 : 00"],
   };
+
+  const [responderNames, setResponderNames] = useState<string[]>([
+    "이종원",
+    "이종원",
+    "이종원",
+    "이종원",
+    "이종원",
+  ]);
 
   const handleCopyClipBoard = async () => {
     try {
@@ -135,7 +176,7 @@ const Conference: React.FC = () => {
           <Content>오늘 피그마는 어쩌구 저쩌구해서 좋았다.</Content>
           <Button onClick={() => handleCopyClipBoard()}>공유하기</Button>
         </Comment>
-        <div></div>
+        <SelectTime />
       </Wrap>
       <Wrap>
         <MostOfTime>
@@ -148,7 +189,12 @@ const Conference: React.FC = () => {
             ))
           )}
         </MostOfTime>
-        <div></div>
+        <Responder>
+          <ResponderText>응답자</ResponderText>
+          {responderNames.map((responderName: string, index: number) => (
+            <ResponderName>{responderName}</ResponderName>
+          ))}
+        </Responder>
       </Wrap>
     </Container>
   );
