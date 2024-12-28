@@ -34,7 +34,7 @@ const DaysContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   padding: 20px;
-  row-gap: 30px;
+  row-gap: 50px;
 `;
 
 const DayBox = styled.div`
@@ -45,15 +45,19 @@ const DayBox = styled.div`
   justify-content: center;
   align-items: center;
   font-family: Inter;
-  font-size: 25px;
+  font-size: 30px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
 `;
 
-const Calender: React.FC = () => {
+interface CalenderProps {
+  selectedDay: number[];
+  setSelectedDay: any;
+}
+
+const Calender: React.FC<CalenderProps> = ({ selectedDay, setSelectedDay }) => {
   const [currentDate] = useState<Date>(new Date());
-  const [selectedDay, setSelectedDay] = useState<number[]>([]);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -68,7 +72,7 @@ const Calender: React.FC = () => {
     (_, i) => nextMonthStart + i
   );
 
-  const totalCells = 35; //7열 * 5행
+  const totalCells = 28; //7열 * 4행
   const daysAfter = Array.from(
     { length: totalCells - daysInCurrentMonth.length - firstDay },
     (_, i) => i + 1
@@ -82,8 +86,10 @@ const Calender: React.FC = () => {
 
   function handleDayClick(day: number) {
     if (day === 0) return;
-    setSelectedDay((prev) =>
-      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+    setSelectedDay((prev: any) =>
+      prev.includes(day)
+        ? prev.filter((d: number) => d !== day)
+        : [...prev, day]
     );
 
     console.log(selectedDay);

@@ -10,15 +10,20 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
+const Wrap = styled.div`
+  display: flex;
+`;
+
 const Main: React.FC = () => {
   const [isOnline, setIsOnline] = useState<boolean>(true);
+  const [selectedDay, setSelectedDay] = useState<number[]>([]);
   return (
     <Container>
       <OnOff isOnline={isOnline} setIsOnline={setIsOnline} />
-      <div>
-        <Calender />
-        <Settings />
-      </div>
+      <Wrap>
+        <Calender selectedDay={selectedDay} setSelectedDay={setSelectedDay} />
+        <Settings selectedDay={selectedDay} isOnline={isOnline} />
+      </Wrap>
     </Container>
   );
 };
