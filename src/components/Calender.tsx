@@ -91,8 +91,6 @@ const Calender: React.FC<CalenderProps> = ({ selectedDay, setSelectedDay }) => {
         ? prev.filter((d: number) => d !== day)
         : [...prev, day]
     );
-
-    console.log(selectedDay);
   }
 
   return (

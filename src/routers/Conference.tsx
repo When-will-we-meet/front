@@ -1,5 +1,6 @@
-import SelectTime from "components/SelectTime";
-import React, { useState } from "react";
+import SelectedTime from "components/SelectedTime";
+import Schedule from "components/Schedule";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -10,6 +11,13 @@ const Container = styled.div`
 const Wrap = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+const ButtonWrap = styled.div`
+  display: flex;
+  margin-top: 253px;
+  margin-left: 177px;
+  gap: 85px;
 `;
 
 const Comment = styled.div`
@@ -72,7 +80,7 @@ const Button = styled.button`
 `;
 
 const MostOfTime = styled.div`
-  width: 850px;
+  width: 600px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -102,13 +110,13 @@ const Time = styled.p`
 `;
 
 const Responder = styled.div`
-  width: 850px;
-  height: 500px;
+  width: 600px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   padding-left: 100px;
+  margin-top: 90px;
 `;
 
 const ResponderText = styled.p`
@@ -127,24 +135,69 @@ const ResponderName = styled.p`
   font-family: Inter;
   font-size: 15px;
   font-style: normal;
-  font-weight: 400;
+  font-weight: 700;
   line-height: normal;
   margin: 15px 0 0 0;
 `;
 
+const BottomButton = styled.button`
+  width: 178px;
+  height: 58px;
+  flex-shrink: 0;
+  border-radius: 5px;
+  border: 2px solid #d9d9d9;
+  background: #fff;
+  color: #000;
+  text-align: center;
+  font-family: Inter;
+  font-size: 25px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  cursor: pointer;
+`;
+
 const Conference: React.FC = () => {
+  const [input, setInput] = useState<boolean>(false); // input 상태
+  const [userName, setUserName] = useState<string>(""); // 사용자 이름
+  const [selectedTimes, setSelectedTimes] = useState<string[]>([]); // 선택된 시간대 저장
+  const [responderNames, setResponderNames] = useState<string[]>([]); // 응답자 이름들 저장
+  const [userSelections, setUserSelections] = useState<any[]>([]); // 각 사용자 선택 시간대 저장 (JSON 형태)
+  const dates = [24, 25, 26, 27, 28, 29];
+  const times = [9, 23];
   const max_respond_time: Record<number, string[]> = {
     24: ["09 : 00 ~ 10 : 00", "10 : 00 ~ 11 : 00"],
     26: ["19 : 00 ~ 20 : 00"],
   };
 
-  const [responderNames, setResponderNames] = useState<string[]>([
-    "이종원",
-    "이종원",
-    "이종원",
-    "이종원",
-    "이종원",
-  ]);
+  useEffect(() => {
+    const initialSelections = [
+      {
+        name: "이종원",
+        selectedTimes: [
+          "24 : 오전 9:00 ~ 오전 10:00",
+          "25 : 오후 2:00 ~ 오후 3:00",
+        ],
+      },
+      {
+        name: "이종오",
+        selectedTimes: [
+          "24 : 오전 9:00 ~ 오전 10:00",
+          "26 : 오후 7:00 ~ 오후 8:00",
+        ],
+      },
+      {
+        name: "이종순",
+        selectedTimes: [
+          "24 : 오전 9:00 ~ 오전 10:00",
+          "26 : 오후 7:00 ~ 오후 8:00",
+        ],
+      },
+    ];
+
+    setUserSelections(initialSelections);
+    setResponderNames(initialSelections.map((user) => user.name));
+  }, []);
 
   const handleCopyClipBoard = async () => {
     try {
@@ -166,6 +219,23 @@ const Conference: React.FC = () => {
     return `${formatHour(start)} ~ ${formatHour(end)}`;
   };
 
+  const handleInput = () => {
+    setInput(!input);
+  };
+
+  const handleSave = (name: string, selectedTimes: string[]) => {
+    setUserName(name);
+    setSelectedTimes(selectedTimes);
+
+    const userSelection = {
+      name,
+      selectedTimes,
+    };
+    setUserSelections((prev) => [...prev, userSelection]);
+
+    setResponderNames((prev) => [...prev, name]);
+  };
+
   return (
     <Container>
       <Wrap>
@@ -176,7 +246,15 @@ const Conference: React.FC = () => {
           <Content>오늘 피그마는 어쩌구 저쩌구해서 좋았다.</Content>
           <Button onClick={() => handleCopyClipBoard()}>공유하기</Button>
         </Comment>
-        <SelectTime />
+        {input ? (
+          <Schedule dates={dates} times={times} onSave={handleSave} />
+        ) : (
+          <SelectedTime
+            dates={dates}
+            times={times}
+            userSelections={userSelections}
+          />
+        )}
       </Wrap>
       <Wrap>
         <MostOfTime>
@@ -195,6 +273,14 @@ const Conference: React.FC = () => {
             <ResponderName>{responderName}</ResponderName>
           ))}
         </Responder>
+        <ButtonWrap>
+          <BottomButton>수정하기</BottomButton>
+          {input ? (
+            <BottomButton onClick={() => handleInput()}>완료</BottomButton>
+          ) : (
+            <BottomButton onClick={() => handleInput()}>추가하기</BottomButton>
+          )}
+        </ButtonWrap>
       </Wrap>
     </Container>
   );
