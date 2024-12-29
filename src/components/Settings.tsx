@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { BASE_URL } from "../components/BASE_URL";
 import styled from "styled-components";
 import RightArrow from "../assets/icon_right_arrow.svg";
 import { useNavigate } from "react-router-dom";
@@ -205,7 +207,25 @@ const Settings: React.FC<SettingsProps> = ({ selectedDay, isOnline }) => {
 
   function handleValidInspection() {
     if (title && responder > 0 && exitTime - startTime > 0 && selectedDay) {
-      navigate("/conference");
+      selectedDay.sort();
+      const PostFetch = async () => {
+        try {
+          const response = await axios.post(`${BASE_URL}/conferences/`, {
+            title: title,
+            description: content,
+            is_online: isOnline,
+            start_time: startTime,
+            end_time: exitTime,
+            responder_count: responder,
+            selected_day: selectedDay,
+          });
+          console.log(response.data);
+          navigate("/conference/", { state: response.data });
+        } catch (error) {
+          console.error("Error fetching menu info:", error);
+        }
+      };
+      PostFetch();
     } else {
       alert("잘못되었습니다");
     }

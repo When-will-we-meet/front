@@ -1,7 +1,10 @@
 import SelectedTime from "components/SelectedTime";
 import Schedule from "components/Schedule";
+import { BASE_URL } from "components/BASE_URL";
+import axios from "axios";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { useLocation } from "react-router-dom";
 
 const Container = styled.div`
   background: #fff;
@@ -158,46 +161,61 @@ const BottomButton = styled.button`
 `;
 
 const Conference: React.FC = () => {
-  const [input, setInput] = useState<boolean>(false); // input 상태
-  const [userName, setUserName] = useState<string>(""); // 사용자 이름
-  const [selectedTimes, setSelectedTimes] = useState<string[]>([]); // 선택된 시간대 저장
-  const [responderNames, setResponderNames] = useState<string[]>([]); // 응답자 이름들 저장
-  const [userSelections, setUserSelections] = useState<any[]>([]); // 각 사용자 선택 시간대 저장 (JSON 형태)
-  const dates = [24, 25, 26, 27, 28, 29];
-  const times = [9, 23];
+  const location = useLocation();
+  const conferenceData = location.state;
+  const [title, setTitle] = useState<string>("");
+  const [content, setContent] = useState<string>("");
+  const [input, setInput] = useState<boolean>(false);
+  const [responderNames, setResponderNames] = useState<string[]>([]);
+  const [userSelections, setUserSelections] = useState<any[]>([]);
+  const [times, setTimes] = useState<number[]>([]);
+  const [dates, setDates] = useState<number[]>([]);
   const max_respond_time: Record<number, string[]> = {
     24: ["09 : 00 ~ 10 : 00", "10 : 00 ~ 11 : 00"],
     26: ["19 : 00 ~ 20 : 00"],
   };
-
   useEffect(() => {
+    const getFetch = async () => {
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/conferences/${conferenceData.data.id}/`
+        );
+        console.log(response.data);
+        setTimes([response.data.start_time, response.data.end_time]);
+        setDates(response.data.selected_day);
+        setTitle(response.data.title);
+        setContent(response.data.description);
+      } catch (error) {
+        console.error("Error fetching menu info:", error);
+      }
+    };
+    getFetch();
     const initialSelections = [
       {
         name: "이종원",
         selectedTimes: [
-          "24 : 오전 9:00 ~ 오전 10:00",
-          "25 : 오후 2:00 ~ 오후 3:00",
+          "1 : 오전 9:00 ~ 오전 10:00",
+          "2 : 오후 2:00 ~ 오후 3:00",
         ],
       },
       {
         name: "이종오",
         selectedTimes: [
-          "24 : 오전 9:00 ~ 오전 10:00",
-          "26 : 오후 7:00 ~ 오후 8:00",
+          "1 : 오전 9:00 ~ 오전 10:00",
+          "2 : 오후 7:00 ~ 오후 8:00",
         ],
       },
       {
         name: "이종순",
         selectedTimes: [
-          "24 : 오전 9:00 ~ 오전 10:00",
-          "26 : 오후 7:00 ~ 오후 8:00",
+          "1 : 오전 9:00 ~ 오전 10:00",
+          "2 : 오후 7:00 ~ 오후 8:00",
         ],
       },
     ];
-
     setUserSelections(initialSelections);
     setResponderNames(initialSelections.map((user) => user.name));
-  }, []);
+  }, [conferenceData.data.id]);
 
   const handleCopyClipBoard = async () => {
     try {
@@ -224,9 +242,6 @@ const Conference: React.FC = () => {
   };
 
   const handleSave = (name: string, selectedTimes: string[]) => {
-    setUserName(name);
-    setSelectedTimes(selectedTimes);
-
     const userSelection = {
       name,
       selectedTimes,
@@ -241,9 +256,9 @@ const Conference: React.FC = () => {
       <Wrap>
         <Comment>
           <Lable>제목</Lable>
-          <Title>LCK 회의</Title>
+          <Title>{title}</Title>
           <Lable>내용</Lable>
-          <Content>오늘 피그마는 어쩌구 저쩌구해서 좋았다.</Content>
+          <Content>{content}</Content>
           <Button onClick={() => handleCopyClipBoard()}>공유하기</Button>
         </Comment>
         {input ? (

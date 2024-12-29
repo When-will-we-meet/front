@@ -1,3 +1,4 @@
+import { count } from "console";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
@@ -46,6 +47,7 @@ const CellGrid = styled.div<{ columns: number }>`
 const Cell = styled.div<{ isSelected: boolean }>`
   background-color: ${(props) => (props.isSelected ? "#79DAFD" : "#fff")};
   display: flex;
+  border: 1px solid #ddd;
   justify-content: center;
   align-items: center;
   width: 147px;
@@ -89,6 +91,7 @@ const SelectTime: React.FC<{
     setHours(hourArray);
 
     const aggregated: { date: number; hour: number; count: number }[] = [];
+    console.log(userSelections);
     userSelections.forEach((user) => {
       user.selectedTimes.forEach((time) => {
         const [dateStr, timeRange] = time.split(" : ");
