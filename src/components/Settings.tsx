@@ -219,8 +219,12 @@ const Settings: React.FC<SettingsProps> = ({ selectedDay, isOnline }) => {
             responder_count: responder,
             selected_day: selectedDay,
           });
-          console.log(response.data);
-          navigate("/conference/", { state: response.data });
+          navigate(
+            `/conference/${response.data.conference_id}/${title}/${content}`,
+            {
+              state: response.data,
+            }
+          );
         } catch (error) {
           console.error("Error fetching menu info:", error);
         }
@@ -281,7 +285,7 @@ const Settings: React.FC<SettingsProps> = ({ selectedDay, isOnline }) => {
         />
       </Wrap>
       <Wrap>
-        <SmallTitle>내용</SmallTitle>
+        <SmallTitle>내용 *</SmallTitle>
         <ContentInput
           placeholder="내용을 입력해주세요."
           onChange={(e) => handleChangeContent(e)}

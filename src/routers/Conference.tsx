@@ -4,11 +4,14 @@ import { BASE_URL } from "components/BASE_URL";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import UpdateTime from "components/UpdateTime";
 
 const Container = styled.div`
   background: #fff;
   display: flex;
+  padding-left: 50px;
+  padding-top: 30px;
 `;
 
 const Wrap = styled.div`
@@ -18,7 +21,7 @@ const Wrap = styled.div`
 
 const ButtonWrap = styled.div`
   display: flex;
-  margin-top: 253px;
+  margin-top: 120px;
   margin-left: 177px;
   gap: 85px;
 `;
@@ -31,12 +34,13 @@ const Comment = styled.div`
   text-align: left;
   margin-left: 88px;
   padding-top: 30px;
+  padding-left: 25px;
 `;
 
 const Lable = styled.p`
   color: #d9d9d9;
   font-family: Inter;
-  font-size: 12px;
+  font-size: 15px;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
@@ -79,7 +83,7 @@ const Button = styled.button`
   background: #fff;
   position: absolute;
   top: 33%;
-  left: 80%;
+  left: 100%;
 `;
 
 const MostOfTime = styled.div`
@@ -132,11 +136,22 @@ const ResponderText = styled.p`
   line-height: normal;
 `;
 
-const ResponderName = styled.p`
-  color: #000;
+const InfoText = styled.p`
+  color: #717171;
   text-align: center;
   font-family: Inter;
-  font-size: 15px;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-top: 5px;
+`;
+
+const ResponderName = styled.p<{ isSelected: boolean }>`
+  color: ${(props) => (props.isSelected ? "#79DAFD" : "#000")};
+  text-align: center;
+  font-family: Inter;
+  font-size: 20px;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
@@ -161,61 +176,84 @@ const BottomButton = styled.button`
 `;
 
 const Conference: React.FC = () => {
+  const { id: paramId } = useParams();
   const location = useLocation();
   const conferenceData = location.state;
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [input, setInput] = useState<boolean>(false);
+  const [update, setUpdate] = useState<boolean>(false);
+  const [idx, setIdx] = useState<number>(-1);
   const [responderNames, setResponderNames] = useState<string[]>([]);
   const [userSelections, setUserSelections] = useState<any[]>([]);
+  const [id, setId] = useState<string | null>(null);
   const [times, setTimes] = useState<number[]>([]);
   const [dates, setDates] = useState<number[]>([]);
-  const max_respond_time: Record<number, string[]> = {
-    24: ["09 : 00 ~ 10 : 00", "10 : 00 ~ 11 : 00"],
-    26: ["19 : 00 ~ 20 : 00"],
-  };
+  const [totalRespondCount, setTotalRespondCount] = useState<number>(0);
+  const [mostFrequentTime, setMostFrequentTime] = useState<any[]>([]);
+  const [moreTime, setMoreTime] = useState<boolean>(false);
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
+  useEffect(() => {
+    if (conferenceData && conferenceData.data?.id) {
+      setId(conferenceData.data.id);
+    } else if (paramId) {
+      setId(paramId);
+    }
+  }, [conferenceData, paramId]);
+
   useEffect(() => {
     const getFetch = async () => {
+      if (!id) return;
       try {
-        const response = await axios.get(
-          `${BASE_URL}/conferences/${conferenceData.data.id}/`
-        );
-        console.log(response.data);
+        const response = await axios.get(`${BASE_URL}/conferences/${id}/`);
         setTimes([response.data.start_time, response.data.end_time]);
         setDates(response.data.selected_day);
         setTitle(response.data.title);
         setContent(response.data.description);
+        setTotalRespondCount(response.data.responder_count);
       } catch (error) {
-        console.error("Error fetching menu info:", error);
+        console.error("Error fetching info:", error);
       }
     };
     getFetch();
-    const initialSelections = [
-      {
-        name: "이종원",
-        selectedTimes: [
-          "1 : 오전 9:00 ~ 오전 10:00",
-          "2 : 오후 2:00 ~ 오후 3:00",
-        ],
-      },
-      {
-        name: "이종오",
-        selectedTimes: [
-          "1 : 오전 9:00 ~ 오전 10:00",
-          "2 : 오후 7:00 ~ 오후 8:00",
-        ],
-      },
-      {
-        name: "이종순",
-        selectedTimes: [
-          "1 : 오전 9:00 ~ 오전 10:00",
-          "2 : 오후 7:00 ~ 오후 8:00",
-        ],
-      },
-    ];
-    setUserSelections(initialSelections);
-    setResponderNames(initialSelections.map((user) => user.name));
-  }, [conferenceData.data.id]);
+  }, [id]);
+
+  useEffect(() => {
+    const getFetchRespond = async () => {
+      if (!id) return;
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/conferences/${id}/responses/`
+        );
+        const responderNames = response.data.map((user: any) => [
+          user.responder_name,
+          user.id,
+        ]);
+        setUserSelections(response.data);
+        setResponderNames(responderNames);
+      } catch (error) {
+        console.error("Error fetching info:", error);
+      }
+    };
+    getFetchRespond();
+  }, [id, update, responderNames]);
+
+  useEffect(() => {
+    const getFetchtatistics = async () => {
+      try {
+        await delay(500);
+        const response = await axios.get(
+          `${BASE_URL}/conferences/${id}/statistics/`
+        );
+        console.log(response.data.total_responses);
+        setTotalRespondCount(response.data.total_responses);
+        setMostFrequentTime(response.data.most_frequent_time);
+      } catch (error) {}
+    };
+    getFetchtatistics();
+  }, [id]);
 
   const handleCopyClipBoard = async () => {
     try {
@@ -227,28 +265,64 @@ const Conference: React.FC = () => {
     }
   };
 
-  const formatTime = (time: string) => {
-    const [start, end] = time.split("~").map((t) => t.trim());
-    const getPeriod = (hour: number) => (hour < 12 ? "오전" : "오후");
-    const formatHour = (t: string) => {
-      const [hour, minute] = t.split(":").map(Number);
-      return `${getPeriod(hour)} ${hour % 12 < 10 ? "0" + (hour % 12) : hour % 12}:${minute.toString().padStart(2, "0")}`;
-    };
-    return `${formatHour(start)} ~ ${formatHour(end)}`;
+  const handleSave = (
+    responder_name: string,
+    checked_time: string[],
+    responder_id: number
+  ) => {
+    if (responder_id === -1) {
+      const userSelection = {
+        conference: Number(id),
+        users: null,
+        responder_name: responder_name,
+        checked_time: checked_time,
+      };
+      const PostFetch = async () => {
+        try {
+          const response = await axios.post(
+            `${BASE_URL}/conferences/${id}/responses/`,
+            userSelection
+          );
+        } catch (error) {
+          console.error("Error fetching info:", error);
+        }
+      };
+      PostFetch();
+      setUserSelections((prev) => [...prev, userSelection]);
+      setResponderNames((prev) => [...prev, responder_name]);
+    } else {
+      const userSelection = {
+        conference: Number(id),
+        users: null,
+        responder_name: responder_name,
+        checked_time: checked_time,
+      };
+      const PutFetch = async () => {
+        try {
+          const response = await axios.put(
+            `${BASE_URL}/conferences/${id}/responses/${responder_id}/`,
+            userSelection
+          );
+        } catch (error) {
+          console.error("Error fetching info:", error);
+        }
+      };
+      PutFetch();
+    }
   };
 
-  const handleInput = () => {
+  const handleClickResponder = (index: number) => {
+    setUpdate(true);
+    setIdx(index);
+  };
+
+  const handleShowAll = () => {
+    setUpdate(false);
+    setIdx(-1);
+  };
+
+  const handleAddResponder = () => {
     setInput(!input);
-  };
-
-  const handleSave = (name: string, selectedTimes: string[]) => {
-    const userSelection = {
-      name,
-      selectedTimes,
-    };
-    setUserSelections((prev) => [...prev, userSelection]);
-
-    setResponderNames((prev) => [...prev, name]);
   };
 
   return (
@@ -263,6 +337,14 @@ const Conference: React.FC = () => {
         </Comment>
         {input ? (
           <Schedule dates={dates} times={times} onSave={handleSave} />
+        ) : update ? (
+          <UpdateTime
+            dates={dates}
+            times={times}
+            id={id}
+            responderId={responderNames[idx][1]}
+            onSave={handleSave}
+          />
         ) : (
           <SelectedTime
             dates={dates}
@@ -274,26 +356,46 @@ const Conference: React.FC = () => {
       <Wrap>
         <MostOfTime>
           <MostOfTimeText>가장 많은 시간대</MostOfTimeText>
-          {Object.keys(max_respond_time).map((key: any) =>
-            max_respond_time[parseInt(key)].map((item, index) => (
-              <Time key={`${key}-${index}`}>
-                {key} : {formatTime(item)}
-              </Time>
-            ))
+          {mostFrequentTime.length < 4 || moreTime
+            ? mostFrequentTime.map((time, index) => {
+                const [day, first, middle, last] = time.split(" : ");
+                const formattedTime = `${day}일 / ${first}:${middle}:${last} / ${totalRespondCount}명`;
+                return <Time key={index}>{formattedTime}</Time>;
+              })
+            : mostFrequentTime.slice(0, 3).map((time, index) => {
+                const [day, first, middle, last] = time.split(" : ");
+                const formattedTime = `${day}일 / ${first}:${middle}:${last} / ${totalRespondCount}명`;
+                return <Time key={index}>{formattedTime}</Time>;
+              })}
+          {mostFrequentTime.length >= 4 && !moreTime && (
+            <p onClick={() => setMoreTime(true)}>더 보기</p>
           )}
         </MostOfTime>
         <Responder>
           <ResponderText>응답자</ResponderText>
+          {responderNames.length > 0 ? (
+            <InfoText>#수정을 원하시면 이름을 선택해주세요.</InfoText>
+          ) : (
+            <></>
+          )}
           {responderNames.map((responderName: string, index: number) => (
-            <ResponderName>{responderName}</ResponderName>
+            <ResponderName
+              key={index}
+              onClick={() => handleClickResponder(index)}
+              isSelected={idx === index}
+            >
+              {responderName[0]}
+            </ResponderName>
           ))}
         </Responder>
         <ButtonWrap>
-          <BottomButton>수정하기</BottomButton>
+          <BottomButton onClick={() => handleShowAll()}>전체보기</BottomButton>
           {input ? (
-            <BottomButton onClick={() => handleInput()}>완료</BottomButton>
+            <BottomButton onClick={() => setInput(!input)}>완료</BottomButton>
           ) : (
-            <BottomButton onClick={() => handleInput()}>추가하기</BottomButton>
+            <BottomButton onClick={() => handleAddResponder()}>
+              추가하기
+            </BottomButton>
           )}
         </ButtonWrap>
       </Wrap>

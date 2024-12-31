@@ -1,10 +1,10 @@
-import { count } from "console";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
   background: #fff;
   display: flex;
+  margin-top: 40px;
 `;
 
 const Wrap = styled.div`
@@ -21,7 +21,7 @@ const TimeTable = styled.div`
   width: 80px;
   display: flex;
   flex-direction: column;
-  margin-left: 28px;
+  margin-left: 20px;
   margin-top: 90px;
   text-align: right;
 `;
@@ -67,14 +67,14 @@ const BlockColor = styled.div<{ color: string }>`
   width: 92px;
   height: 12px;
   border: ${(props) =>
-    props.color === "#79DAFD" ? "2px solid #000" : "1px solid #000"};
+    props.color === "#79DAFD" ? "2px solid #000" : "1px solid #D9D9D9"};
   background: ${(props) => props.color};
 `;
 
 const SelectTime: React.FC<{
   dates: number[];
   times: number[];
-  userSelections: { name: string; selectedTimes: string[] }[];
+  userSelections: { responder_name: string; checked_time: string[] }[];
 }> = ({ dates, times, userSelections }) => {
   const [hours, setHours] = useState<number[]>([]);
   const [aggregatedSelections, setAggregatedSelections] = useState<
@@ -91,9 +91,8 @@ const SelectTime: React.FC<{
     setHours(hourArray);
 
     const aggregated: { date: number; hour: number; count: number }[] = [];
-    console.log(userSelections);
-    userSelections.forEach((user) => {
-      user.selectedTimes.forEach((time) => {
+    userSelections.forEach((responder_name) => {
+      responder_name.checked_time.forEach((time) => {
         const [dateStr, timeRange] = time.split(" : ");
         const date = parseInt(dateStr.trim());
         const [startHour] = timeRange

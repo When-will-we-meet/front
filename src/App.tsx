@@ -19,7 +19,10 @@ const App: React.FC = () => {
         <Header />
         <Routes>
           <Route path="/" element={<Main />} />
-          <Route path="/conference" element={<Conference />} />
+          <Route
+            path="/conference/:id/:title/:content"
+            element={<Conference />}
+          />
         </Routes>
       </Router>
     </Container>

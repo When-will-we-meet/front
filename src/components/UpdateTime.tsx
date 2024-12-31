@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import styled from "styled-components";
+import { BASE_URL } from "./BASE_URL";
 
 const Container = styled.div`
   background: #fff;
   display: flex;
   margin-top: 40px;
 `;
-
 const Wrap = styled.div`
   width: 150px;
   display: flex;
@@ -16,7 +17,6 @@ const Wrap = styled.div`
   margin-left: 20px;
   position: relative;
 `;
-
 const TimeTable = styled.div`
   width: 80px;
   display: flex;
@@ -25,7 +25,6 @@ const TimeTable = styled.div`
   margin-top: 90px;
   text-align: right;
 `;
-
 const Time = styled.p`
   color: #000;
   font-family: Inter;
@@ -35,7 +34,6 @@ const Time = styled.p`
   line-height: normal;
   margin: 0 0 25px 0;
 `;
-
 const CellGrid = styled.div<{ columns: number }>`
   display: grid;
   grid-template-columns: repeat(${(props) => props.columns}, 1fr);
@@ -43,9 +41,8 @@ const CellGrid = styled.div<{ columns: number }>`
   margin-top: 59px;
   margin-left: 10px;
 `;
-
-const Cell = styled.div<{ isBeingSelected: boolean }>`
-  background-color: ${(props) => (props.isBeingSelected ? "#79DAFD" : "#fff")};
+const Cell = styled.div<{ isSelected: boolean }>`
+  background-color: ${(props) => (props.isSelected ? "#79DAFD" : "#fff")};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -56,7 +53,6 @@ const Cell = styled.div<{ isBeingSelected: boolean }>`
     background-color: #e0f7ff;
   }
 `;
-
 const HeadCount = styled.p`
   color: #000;
   text-align: center;
@@ -66,15 +62,13 @@ const HeadCount = styled.p`
   font-weight: 400;
   line-height: normal;
 `;
-
 const BlockColor = styled.div<{ color: string }>`
   width: 92px;
   height: 12px;
   border: ${(props) =>
-    props.color === "#79DAFD" ? "2px solid #000" : "1px solid #D9D9D9"};
+    props.color === "#79DAFD" ? "2px solid #000" : "1px solid #000"};
   background: ${(props) => props.color};
 `;
-
 const Button = styled.button`
   width: 150px;
   height: 30px;
@@ -84,34 +78,17 @@ const Button = styled.button`
   background: #fff;
   position: absolute;
   bottom: 9.5%;
-  left: 100%;
   cursor: pointer;
-  &:hover {
-    background-color: #79dafd;
-  }
 `;
-
-const InputWrap = styled.div`
-  display: flex;
-`;
-
-const Input = styled.input`
-  position: absolute;
-  width: 100px;
-  border-radius: 5px;
-  border: 1px solid #d9d9d9;
-  padding-left: 10px;
-  bottom: 10%;
-  left: 0%;
-`;
-
-const Schedule: React.FC<{
+const UpdateTime: React.FC<{
   dates: number[];
   times: number[];
+  id: string | null;
+  responderId: string;
   onSave: (name: string, selectedTimes: string[], responder_id: number) => void;
-}> = ({ dates, times, onSave }) => {
+}> = ({ dates, times, id, responderId, onSave }) => {
   const [name, setName] = useState<string>("");
-  const [hours, setHours] = useState<number[]>();
+  const [hours, setHours] = useState<number[]>([]);
   const [currentlySelecting, setCurrentlySelecting] = useState<string[]>([]);
 
   useEffect(() => {
@@ -122,7 +99,19 @@ const Schedule: React.FC<{
       (_, index) => start + index
     );
     setHours(hourArray);
-  }, [times]);
+
+    const getFetchtatistics = async () => {
+      try {
+        const response = await axios.get(
+          `${BASE_URL}/conferences/${id}/responses/${responderId}/`
+        );
+        console.log(response.data);
+        setName(response.data.responder_name);
+        setCurrentlySelecting(response.data.checked_time);
+      } catch (error) {}
+    };
+    getFetchtatistics();
+  }, [times, responderId, id]);
 
   const formatHour = (hour: number): string => {
     const period = hour < 12 ? "오전" : "오후";
@@ -141,24 +130,24 @@ const Schedule: React.FC<{
     const selectedTime = `${date} : ${timeRange}`;
 
     if (currentlySelecting.includes(selectedTime)) {
-      setCurrentlySelecting(
-        currentlySelecting.filter((time) => time !== selectedTime)
+      setCurrentlySelecting((prev) =>
+        prev.filter((time) => time !== selectedTime)
       );
     } else {
-      setCurrentlySelecting([...currentlySelecting, selectedTime]);
+      setCurrentlySelecting((prev) => [...prev, selectedTime]);
     }
   };
 
-  const isTimeBeingSelected = (date: number, hour: number) => {
+  const isTimeSelected = (date: number, hour: number) => {
     const timeRange = getTimeRange(hour);
     return currentlySelecting.includes(`${date} : ${timeRange}`);
   };
 
   const handleSave = () => {
-    if (name && currentlySelecting.length > 0) {
-      onSave(name, currentlySelecting, -1);
+    if (currentlySelecting.length > 0) {
+      onSave(name, currentlySelecting, Number(responderId));
     } else {
-      alert("이름을 입력하고 시간대를 선택해주세요.");
+      alert("시간대를 선택해주세요.");
     }
   };
 
@@ -176,7 +165,7 @@ const Schedule: React.FC<{
       </TimeTable>
       <CellGrid columns={dates.length}>
         {dates.map((date) => (
-          <Cell key={date} isBeingSelected={false}>
+          <Cell key={date} isSelected={false}>
             {date}
           </Cell>
         ))}
@@ -185,7 +174,7 @@ const Schedule: React.FC<{
             {dates.map((date) => (
               <Cell
                 key={`${date}-${hour}`}
-                isBeingSelected={isTimeBeingSelected(date, hour)}
+                isSelected={isTimeSelected(date, hour)}
                 onClick={() => handleCellClick(date, hour)}
               />
             ))}
@@ -194,27 +183,17 @@ const Schedule: React.FC<{
       </CellGrid>
       <Wrap>
         <HeadCount>1 ~ 2명</HeadCount>
-        <BlockColor color={getBlockColor(2)}></BlockColor>
+        <BlockColor color={getBlockColor(2)} />
         <HeadCount>3 ~ 4명</HeadCount>
-        <BlockColor color={getBlockColor(4)}></BlockColor>
+        <BlockColor color={getBlockColor(4)} />
         <HeadCount>5 ~ 6명</HeadCount>
-        <BlockColor color={getBlockColor(6)}></BlockColor>
+        <BlockColor color={getBlockColor(6)} />
         <HeadCount>7 ~ 최대 인원수</HeadCount>
-        <BlockColor color={getBlockColor(7)}></BlockColor>
-        <InputWrap>
-          <div>
-            <Input
-              type="text"
-              placeholder="이름을 입력하세요"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-          <Button onClick={handleSave}>시간대 추가</Button>
-        </InputWrap>
+        <BlockColor color={getBlockColor(7)} />
+        <Button onClick={handleSave}>변경 사항 저장</Button>
       </Wrap>
     </Container>
   );
 };
 
-export default Schedule;
+export default UpdateTime;
