@@ -84,6 +84,13 @@ const Button = styled.button`
   position: absolute;
   top: 33%;
   left: 100%;
+
+  cursor: pointer;
+
+  &:hover {
+    background-color: #79dafd;
+    color: #fff;
+  }
 `;
 
 const MostOfTime = styled.div`
@@ -104,6 +111,11 @@ const MostOfTimeText = styled.p`
   font-weight: 400;
   line-height: normal;
   margin: 45px 0 4px 0;
+`;
+
+const MinMax = styled.p`
+  color: #717171;
+  cursor: pointer;
 `;
 
 const Time = styled.p`
@@ -173,6 +185,11 @@ const BottomButton = styled.button`
   font-weight: 400;
   line-height: normal;
   cursor: pointer;
+
+  &:hover {
+    background-color: #79dafd;
+    color: #fff;
+  }
 `;
 
 const Conference: React.FC = () => {
@@ -190,6 +207,7 @@ const Conference: React.FC = () => {
   const [times, setTimes] = useState<number[]>([]);
   const [dates, setDates] = useState<number[]>([]);
   const [totalRespondCount, setTotalRespondCount] = useState<number>(0);
+  const [mostRespondTimeCount, setMostRespondTimeCount] = useState<number>(0);
   const [mostFrequentTime, setMostFrequentTime] = useState<any[]>([]);
   const [moreTime, setMoreTime] = useState<boolean>(false);
   const delay = (ms: number) =>
@@ -238,22 +256,20 @@ const Conference: React.FC = () => {
       }
     };
     getFetchRespond();
-  }, [id, update, responderNames]);
+  }, [id, update]);
 
   useEffect(() => {
     const getFetchtatistics = async () => {
       try {
-        await delay(500);
         const response = await axios.get(
           `${BASE_URL}/conferences/${id}/statistics/`
         );
-        console.log(response.data.total_responses);
-        setTotalRespondCount(response.data.total_responses);
+        setMostRespondTimeCount(response.data.total_responses);
         setMostFrequentTime(response.data.most_frequent_time);
       } catch (error) {}
     };
     getFetchtatistics();
-  }, [id]);
+  }, [id, update, input]);
 
   const handleCopyClipBoard = async () => {
     try {
@@ -290,6 +306,7 @@ const Conference: React.FC = () => {
       PostFetch();
       setUserSelections((prev) => [...prev, userSelection]);
       setResponderNames((prev) => [...prev, responder_name]);
+      console.log(responderNames);
     } else {
       const userSelection = {
         conference: Number(id),
@@ -303,6 +320,7 @@ const Conference: React.FC = () => {
             `${BASE_URL}/conferences/${id}/responses/${responder_id}/`,
             userSelection
           );
+          alert(response.data + "수정 완료");
         } catch (error) {
           console.error("Error fetching info:", error);
         }
@@ -318,11 +336,18 @@ const Conference: React.FC = () => {
 
   const handleShowAll = () => {
     setUpdate(false);
+    setInput(false);
     setIdx(-1);
   };
 
   const handleAddResponder = () => {
-    setInput(!input);
+    if (responderNames.length < totalRespondCount) {
+      setInput(!input);
+      setIdx(-1);
+      setUpdate(false);
+    } else {
+      alert("응답자를 더 추가할 수 없습니다.");
+    }
   };
 
   return (
@@ -359,16 +384,22 @@ const Conference: React.FC = () => {
           {mostFrequentTime.length < 4 || moreTime
             ? mostFrequentTime.map((time, index) => {
                 const [day, first, middle, last] = time.split(" : ");
-                const formattedTime = `${day}일 / ${first}:${middle}:${last} / ${totalRespondCount}명`;
+                const formattedTime = `${day}일 / ${first}:${middle}:${last} / ${mostRespondTimeCount}명`;
                 return <Time key={index}>{formattedTime}</Time>;
               })
             : mostFrequentTime.slice(0, 3).map((time, index) => {
                 const [day, first, middle, last] = time.split(" : ");
-                const formattedTime = `${day}일 / ${first}:${middle}:${last} / ${totalRespondCount}명`;
+                const formattedTime = `${day}일 / ${first}:${middle}:${last} / ${mostRespondTimeCount}명`;
                 return <Time key={index}>{formattedTime}</Time>;
               })}
-          {mostFrequentTime.length >= 4 && !moreTime && (
-            <p onClick={() => setMoreTime(true)}>더 보기</p>
+          {mostFrequentTime.length >= 4 ? (
+            !moreTime ? (
+              <MinMax onClick={() => setMoreTime(true)}>더 보기</MinMax>
+            ) : (
+              <MinMax onClick={() => setMoreTime(false)}>간략히 보기</MinMax>
+            )
+          ) : (
+            <></>
           )}
         </MostOfTime>
         <Responder>

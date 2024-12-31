@@ -12,20 +12,20 @@ const Flex = styled.div`
   gap: 60px;
 `;
 
-const Button = styled.button<{ isActive: boolean }>`
+const Button = styled.button<{ $isActive: boolean }>`
   width: 213px;
   height: 84px;
   flex-shrink: 0;
   border-radius: 5px;
   border: 2px solid #d9d9d9;
-  background: ${(props) => (props.isActive ? "#79DAFD" : "#FFF")};
+  background: ${(props) => (props.$isActive ? "#79DAFD" : "#FFF")};
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
 
   //Text
-  color: ${(props) => (props.isActive ? "#FFF" : "#000")};
+  color: ${(props) => (props.$isActive ? "#FFF" : "#000")};
   text-align: center;
   font-family: Inter;
   font-size: 25px;
@@ -48,10 +48,10 @@ const OnOff: React.FC<OnOffProps> = ({ isOnline, setIsOnline }) => {
   return (
     <Container>
       <Flex>
-        <Button isActive={isOnline} onClick={() => handleButtonTrue()}>
+        <Button $isActive={isOnline} onClick={() => handleButtonTrue()}>
           온라인
         </Button>
-        <Button isActive={!isOnline} onClick={() => handleButtonFalse()}>
+        <Button $isActive={!isOnline} onClick={() => handleButtonFalse()}>
           오프라인
         </Button>
       </Flex>

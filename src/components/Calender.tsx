@@ -67,14 +67,15 @@ const Calender: React.FC<CalenderProps> = ({ selectedDay, setSelectedDay }) => {
   const lastDate = new Date(year, month + 1, 0).getDate(); // 이번 달 마지막 날짜
   const nextMonthStart = today > lastDate ? 1 : today; // 다음 달로 넘어갈 경우 조정
 
+  const totalCells = 7 * 4;
   const daysInCurrentMonth = Array.from(
-    { length: lastDate - nextMonthStart + 1 },
+    { length: Math.min(lastDate - nextMonthStart + 1, totalCells - firstDay) },
     (_, i) => nextMonthStart + i
   );
 
-  const totalCells = 28; //7열 * 4행
+  const remainingCells = totalCells - (firstDay + daysInCurrentMonth.length);
   const daysAfter = Array.from(
-    { length: totalCells - daysInCurrentMonth.length - firstDay },
+    { length: Math.max(remainingCells, 0) },
     (_, i) => i + 1
   );
 

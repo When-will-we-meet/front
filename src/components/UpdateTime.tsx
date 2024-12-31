@@ -22,7 +22,7 @@ const TimeTable = styled.div`
   display: flex;
   flex-direction: column;
   margin-left: 20px;
-  margin-top: 90px;
+  margin-top: 91px;
   text-align: right;
 `;
 const Time = styled.p`
@@ -32,7 +32,7 @@ const Time = styled.p`
   font-style: normal;
   font-weight: 400;
   line-height: normal;
-  margin: 0 0 25px 0;
+  margin: 0 0 22px 0;
 `;
 const CellGrid = styled.div<{ columns: number }>`
   display: grid;
@@ -169,7 +169,7 @@ const UpdateTime: React.FC<{
             {date}
           </Cell>
         ))}
-        {hours?.map((hour) => (
+        {hours?.slice(0, hours.length - 1).map((hour) => (
           <>
             {dates.map((date) => (
               <Cell
