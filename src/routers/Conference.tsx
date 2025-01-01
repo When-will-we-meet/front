@@ -118,8 +118,8 @@ const MinMax = styled.p`
   cursor: pointer;
 `;
 
-const Time = styled.p`
-  color: #000;
+const Time = styled.p<{ $isSelected: boolean }>`
+  color: ${(props) => (props.$isSelected ? "#79DAFD" : "#000")};
   font-family: Inter;
   font-size: 20px;
   font-style: normal;
@@ -159,8 +159,8 @@ const InfoText = styled.p`
   margin-top: 5px;
 `;
 
-const ResponderName = styled.p<{ isSelected: boolean }>`
-  color: ${(props) => (props.isSelected ? "#79DAFD" : "#000")};
+const ResponderName = styled.p<{ $isSelected: boolean }>`
+  color: ${(props) => (props.$isSelected ? "#79DAFD" : "#000")};
   text-align: center;
   font-family: Inter;
   font-size: 20px;
@@ -196,11 +196,13 @@ const Conference: React.FC = () => {
   const { id: paramId } = useParams();
   const location = useLocation();
   const conferenceData = location.state;
+  const [addBoolean, setAddBoolean] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [input, setInput] = useState<boolean>(false);
   const [update, setUpdate] = useState<boolean>(false);
-  const [idx, setIdx] = useState<number>(-1);
+  const [idxR, setIdxR] = useState<number>(-1);
+  const [idxT, setIdxT] = useState<number>(-1);
   const [responderNames, setResponderNames] = useState<string[]>([]);
   const [userSelections, setUserSelections] = useState<any[]>([]);
   const [id, setId] = useState<string | null>(null);
@@ -210,8 +212,7 @@ const Conference: React.FC = () => {
   const [mostRespondTimeCount, setMostRespondTimeCount] = useState<number>(0);
   const [mostFrequentTime, setMostFrequentTime] = useState<any[]>([]);
   const [moreTime, setMoreTime] = useState<boolean>(false);
-  const delay = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
+  const [mostTimeResponder, setMostTimeResponder] = useState<any[]>([]);
 
   useEffect(() => {
     if (conferenceData && conferenceData.data?.id) {
@@ -256,7 +257,7 @@ const Conference: React.FC = () => {
       }
     };
     getFetchRespond();
-  }, [id, update]);
+  }, [id, update, addBoolean]);
 
   useEffect(() => {
     const getFetchtatistics = async () => {
@@ -264,6 +265,8 @@ const Conference: React.FC = () => {
         const response = await axios.get(
           `${BASE_URL}/conferences/${id}/statistics/`
         );
+        console.log(response.data.most_frequent_respondents[0]);
+        setMostTimeResponder(response.data.most_frequent_respondents);
         setMostRespondTimeCount(response.data.total_responses);
         setMostFrequentTime(response.data.most_frequent_time);
       } catch (error) {}
@@ -295,10 +298,13 @@ const Conference: React.FC = () => {
       };
       const PostFetch = async () => {
         try {
+          setAddBoolean(true);
           const response = await axios.post(
             `${BASE_URL}/conferences/${id}/responses/`,
             userSelection
           );
+          setAddBoolean(false);
+          alert(responder_name + " 추가 완료");
         } catch (error) {
           console.error("Error fetching info:", error);
         }
@@ -329,21 +335,28 @@ const Conference: React.FC = () => {
     }
   };
 
+  const handleShowResponder = (index: number) => {
+    setIdxT(index);
+  };
+
   const handleClickResponder = (index: number) => {
     setUpdate(true);
-    setIdx(index);
+    setIdxR(index);
+    setIdxT(-1);
   };
 
   const handleShowAll = () => {
     setUpdate(false);
     setInput(false);
-    setIdx(-1);
+    setIdxR(-1);
+    setIdxT(-1);
   };
 
   const handleAddResponder = () => {
     if (responderNames.length < totalRespondCount) {
       setInput(!input);
-      setIdx(-1);
+      setIdxR(-1);
+      setIdxT(-1);
       setUpdate(false);
     } else {
       alert("응답자를 더 추가할 수 없습니다.");
@@ -367,7 +380,7 @@ const Conference: React.FC = () => {
             dates={dates}
             times={times}
             id={id}
-            responderId={responderNames[idx][1]}
+            responderId={responderNames[idxR][1]}
             onSave={handleSave}
           />
         ) : (
@@ -385,12 +398,28 @@ const Conference: React.FC = () => {
             ? mostFrequentTime.map((time, index) => {
                 const [day, first, middle, last] = time.split(" : ");
                 const formattedTime = `${day}일 / ${first}:${middle}:${last} / ${mostRespondTimeCount}명`;
-                return <Time key={index}>{formattedTime}</Time>;
+                return (
+                  <Time
+                    key={index}
+                    $isSelected={idxT === index}
+                    onClick={() => handleShowResponder(index)}
+                  >
+                    {formattedTime}
+                  </Time>
+                );
               })
             : mostFrequentTime.slice(0, 3).map((time, index) => {
                 const [day, first, middle, last] = time.split(" : ");
                 const formattedTime = `${day}일 / ${first}:${middle}:${last} / ${mostRespondTimeCount}명`;
-                return <Time key={index}>{formattedTime}</Time>;
+                return (
+                  <Time
+                    key={index}
+                    $isSelected={idxT === index}
+                    onClick={() => handleShowResponder(index)}
+                  >
+                    {formattedTime}
+                  </Time>
+                );
               })}
           {mostFrequentTime.length >= 4 ? (
             !moreTime ? (
@@ -409,15 +438,23 @@ const Conference: React.FC = () => {
           ) : (
             <></>
           )}
-          {responderNames.map((responderName: string, index: number) => (
-            <ResponderName
-              key={index}
-              onClick={() => handleClickResponder(index)}
-              isSelected={idx === index}
-            >
-              {responderName[0]}
-            </ResponderName>
-          ))}
+          {idxT !== -1
+            ? mostTimeResponder[idxT].map(
+                (responderName: string, index: number) => (
+                  <ResponderName key={index} $isSelected={false}>
+                    {responderName}
+                  </ResponderName>
+                )
+              )
+            : responderNames.map((responderName: string, index: number) => (
+                <ResponderName
+                  key={index}
+                  onClick={() => handleClickResponder(index)}
+                  $isSelected={idxR === index}
+                >
+                  {responderName[0]}
+                </ResponderName>
+              ))}
         </Responder>
         <ButtonWrap>
           <BottomButton onClick={() => handleShowAll()}>전체보기</BottomButton>
