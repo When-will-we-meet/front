@@ -320,7 +320,7 @@ const Conference: React.FC = () => {
             `${BASE_URL}/conferences/${id}/responses/${responder_id}/`,
             userSelection
           );
-          alert(response.data + "수정 완료");
+          alert(response.data.responder_name + " 수정 완료");
         } catch (error) {
           console.error("Error fetching info:", error);
         }
