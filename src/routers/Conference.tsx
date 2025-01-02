@@ -93,6 +93,21 @@ const Button = styled.button`
   }
 `;
 
+const OnOff = styled.div`
+  width: 60px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  color: #000;
+  top: 125%;
+  left: 2.5%;
+`;
+
 const MostOfTime = styled.div`
   width: 600px;
   display: flex;
@@ -197,6 +212,7 @@ const Conference: React.FC = () => {
   const location = useLocation();
   const conferenceData = location.state;
   const [addBoolean, setAddBoolean] = useState<boolean>(false);
+  const [isOnline, setIsOnline] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [input, setInput] = useState<boolean>(false);
@@ -227,6 +243,8 @@ const Conference: React.FC = () => {
       if (!id) return;
       try {
         const response = await axios.get(`${BASE_URL}/conferences/${id}/`);
+
+        setIsOnline(response.data.is_online);
         setTimes([response.data.start_time, response.data.end_time]);
         setDates(response.data.selected_day);
         setTitle(response.data.title);
@@ -372,6 +390,7 @@ const Conference: React.FC = () => {
           <Lable>내용</Lable>
           <Content>{content}</Content>
           <Button onClick={() => handleCopyClipBoard()}>공유하기</Button>
+          <OnOff>{isOnline ? "온라인" : "오프라인"}</OnOff>
         </Comment>
         {input ? (
           <Schedule dates={dates} times={times} onSave={handleSave} />
