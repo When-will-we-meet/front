@@ -15,6 +15,7 @@ const Wrap = styled.div`
   align-items: center;
   margin-left: 20px;
   position: relative;
+  margin-top: 50px;
 `;
 
 const TimeTable = styled.div`
@@ -93,6 +94,7 @@ const Button = styled.button`
 
 const InputWrap = styled.div`
   display: flex;
+  margin-top: 80px;
 `;
 
 const Input = styled.input`

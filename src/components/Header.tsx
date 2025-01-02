@@ -5,6 +5,7 @@ import styled from "styled-components";
 const Container = styled.div`
   height: 80px;
   width: 100%;
+  margin: 0;
   border: 1px solid #d9d9d9;
   display: flex;
   justify-content: space-between;

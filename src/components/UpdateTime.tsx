@@ -15,6 +15,7 @@ const Wrap = styled.div`
   justify-content: center;
   align-items: center;
   margin-left: 20px;
+  margin-top: 50px;
   position: relative;
 `;
 const TimeTable = styled.div`
@@ -76,8 +77,7 @@ const Button = styled.button`
   border: 2px solid #d9d9d9;
   color: #000;
   background: #fff;
-  position: absolute;
-  bottom: 9.5%;
+  margin-top: 20px;
   cursor: pointer;
 `;
 const UpdateTime: React.FC<{

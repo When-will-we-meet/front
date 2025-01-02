@@ -219,6 +219,7 @@ const Settings: React.FC<SettingsProps> = ({ selectedDay, isOnline }) => {
             responder_count: responder,
             selected_day: selectedDay,
           });
+          console.log(response.data);
           navigate(
             `/conference/${response.data.conference_id}/${title}/${content}`,
             {
