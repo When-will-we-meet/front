@@ -207,7 +207,7 @@ const Settings: React.FC<SettingsProps> = ({ selectedDay, isOnline }) => {
 
   function handleValidInspection() {
     if (title && responder > 0 && exitTime - startTime > 0 && selectedDay) {
-      selectedDay.sort();
+      selectedDay.sort((a, b) => a - b);
       const PostFetch = async () => {
         try {
           const response = await axios.post(`${BASE_URL}/conferences/`, {

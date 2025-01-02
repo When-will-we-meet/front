@@ -94,7 +94,7 @@ const Button = styled.button`
 `;
 
 const OnOff = styled.div`
-  width: 60px;
+  width: 100px;
   height: 50px;
   display: flex;
   justify-content: center;
@@ -105,7 +105,7 @@ const OnOff = styled.div`
   font-weight: 600;
   color: #000;
   top: 125%;
-  left: 2.5%;
+  left: 0.5%;
 `;
 
 const MostOfTime = styled.div`
@@ -243,7 +243,6 @@ const Conference: React.FC = () => {
       if (!id) return;
       try {
         const response = await axios.get(`${BASE_URL}/conferences/${id}/`);
-
         setIsOnline(response.data.is_online);
         setTimes([response.data.start_time, response.data.end_time]);
         setDates(response.data.selected_day);
@@ -279,15 +278,19 @@ const Conference: React.FC = () => {
 
   useEffect(() => {
     const getFetchtatistics = async () => {
+      if (!id) return;
       try {
+        console.log(id);
         const response = await axios.get(
           `${BASE_URL}/conferences/${id}/statistics/`
         );
-        console.log(response.data.most_frequent_respondents[0]);
+        console.log(response.data);
         setMostTimeResponder(response.data.most_frequent_respondents);
         setMostRespondTimeCount(response.data.total_responses);
         setMostFrequentTime(response.data.most_frequent_time);
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     };
     getFetchtatistics();
   }, [id, update, input]);
@@ -355,6 +358,7 @@ const Conference: React.FC = () => {
 
   const handleShowResponder = (index: number) => {
     setIdxT(index);
+    console.log(mostTimeResponder);
   };
 
   const handleClickResponder = (index: number) => {
