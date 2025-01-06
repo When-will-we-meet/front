@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { BASE_URL } from "../components/BASE_URL";
-import styled from "styled-components";
-import RightArrow from "../assets/icon_right_arrow.svg";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import axios from 'axios';
+import { BASE_URL } from '../components/BASE_URL';
+import styled from 'styled-components';
+import RightArrow from '../assets/icon_right_arrow.svg';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   background: #fff;
@@ -149,40 +149,40 @@ const Settings: React.FC<SettingsProps> = ({ selectedDay, isOnline }) => {
   const [startTime, setStartTime] = useState<number>(6);
   const [exitTime, setExitTime] = useState<number>(6);
   const [responder, setResponder] = useState<number>(2);
-  const [title, setTitle] = useState<string>("");
-  const [content, setContent] = useState<string>("");
+  const [title, setTitle] = useState<string>('');
+  const [content, setContent] = useState<string>('');
   const times = [
-    "오전 06:00",
-    "오전 07:00",
-    "오전 08:00",
-    "오전 09:00",
-    "오전 10:00",
-    "오전 11:00",
-    "오후 12:00",
-    "오후 01:00",
-    "오후 02:00",
-    "오후 03:00",
-    "오후 04:00",
-    "오후 05:00",
-    "오후 06:00",
-    "오후 07:00",
-    "오후 08:00",
-    "오후 09:00",
-    "오후 10:00",
-    "오후 11:00",
-    "오후 12:00",
+    '오전 06:00',
+    '오전 07:00',
+    '오전 08:00',
+    '오전 09:00',
+    '오전 10:00',
+    '오전 11:00',
+    '오후 12:00',
+    '오후 01:00',
+    '오후 02:00',
+    '오후 03:00',
+    '오후 04:00',
+    '오후 05:00',
+    '오후 06:00',
+    '오후 07:00',
+    '오후 08:00',
+    '오후 09:00',
+    '오후 10:00',
+    '오후 11:00',
+    '오후 12:00',
   ];
 
   const responders = [
-    "2명",
-    "3명",
-    "4명",
-    "5명",
-    "6명",
-    "7명",
-    "8명",
-    "9명",
-    "10명",
+    '2명',
+    '3명',
+    '4명',
+    '5명',
+    '6명',
+    '7명',
+    '8명',
+    '9명',
+    '10명',
   ];
 
   function handleChangeStart(time: number) {
@@ -224,15 +224,15 @@ const Settings: React.FC<SettingsProps> = ({ selectedDay, isOnline }) => {
             `/conference/${response.data.conference_id}/${title}/${content}`,
             {
               state: response.data,
-            }
+            },
           );
         } catch (error) {
-          console.error("Error fetching menu info:", error);
+          console.error('Error fetching menu info:', error);
         }
       };
       PostFetch();
     } else {
-      alert("잘못되었습니다");
+      alert('잘못되었습니다');
     }
   }
   return (

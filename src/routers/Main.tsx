@@ -1,8 +1,8 @@
-import OnOff from "components/OnOff";
-import React, { useState } from "react";
-import Calender from "components/Calender";
-import Settings from "components/Settings";
-import styled from "styled-components";
+import OnOff from 'components/OnOff';
+import React, { useState } from 'react';
+import Calender from 'components/Calender';
+import Settings from 'components/Settings';
+import styled from 'styled-components';
 
 const Container = styled.div`
   background: #fff;

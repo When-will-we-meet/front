@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 const Container = styled.div`
   display: flex;
@@ -18,14 +18,14 @@ const Button = styled.button<{ $isActive: boolean }>`
   flex-shrink: 0;
   border-radius: 5px;
   border: 2px solid #d9d9d9;
-  background: ${(props) => (props.$isActive ? "#79DAFD" : "#FFF")};
+  background: ${(props) => (props.$isActive ? '#79DAFD' : '#FFF')};
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
 
   //Text
-  color: ${(props) => (props.$isActive ? "#FFF" : "#000")};
+  color: ${(props) => (props.$isActive ? '#FFF' : '#000')};
   text-align: center;
   font-family: Inter;
   font-size: 25px;

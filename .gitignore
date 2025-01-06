@@ -21,7 +21,9 @@ out/
 Thumbs.db
 .vscode/
 .idea/
+.eslintrc
 *.log
+.prettierrc
 
 # 기타 설정 파일
 npm-debug.log*

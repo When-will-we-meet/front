@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import styled from 'styled-components';
 
 const Container = styled.div`
   height: 575px;
@@ -70,27 +70,27 @@ const Calender: React.FC<CalenderProps> = ({ selectedDay, setSelectedDay }) => {
   const totalCells = 7 * 4;
   const daysInCurrentMonth = Array.from(
     { length: Math.min(lastDate - nextMonthStart + 1, totalCells - firstDay) },
-    (_, i) => nextMonthStart + i
+    (_, i) => nextMonthStart + i,
   );
 
   const remainingCells = totalCells - (firstDay + daysInCurrentMonth.length);
   const daysAfter = Array.from(
     { length: Math.max(remainingCells, 0) },
-    (_, i) => i + 1
+    (_, i) => i + 1,
   );
 
   const days = Array.from({ length: firstDay }, () => 0)
     .concat(daysInCurrentMonth)
     .concat(daysAfter);
 
-  const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
+  const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
 
   function handleDayClick(day: number) {
     if (day === 0) return;
     setSelectedDay((prev: any) =>
       prev.includes(day)
         ? prev.filter((d: number) => d !== day)
-        : [...prev, day]
+        : [...prev, day],
     );
   }
 
@@ -106,11 +106,11 @@ const Calender: React.FC<CalenderProps> = ({ selectedDay, setSelectedDay }) => {
           <DayBox
             key={index}
             style={{
-              color: selectedDay.includes(day) ? "#79DAFD" : "#000",
+              color: selectedDay.includes(day) ? '#79DAFD' : '#000',
             }}
             onClick={() => handleDayClick(day)}
           >
-            {day > 0 ? day : ""}
+            {day > 0 ? day : ''}
           </DayBox>
         ))}
       </DaysContainer>

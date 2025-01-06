@@ -1,11 +1,11 @@
-import SelectedTime from "components/SelectedTime";
-import Schedule from "components/Schedule";
-import { BASE_URL } from "components/BASE_URL";
-import axios from "axios";
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import { useLocation, useParams } from "react-router-dom";
-import UpdateTime from "components/UpdateTime";
+import SelectedTime from 'components/SelectedTime';
+import Schedule from 'components/Schedule';
+import { BASE_URL } from 'components/BASE_URL';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { useLocation, useParams } from 'react-router-dom';
+import UpdateTime from 'components/UpdateTime';
 
 const Container = styled.div`
   background: #fff;
@@ -134,7 +134,7 @@ const MinMax = styled.p`
 `;
 
 const Time = styled.p<{ $isSelected: boolean }>`
-  color: ${(props) => (props.$isSelected ? "#79DAFD" : "#000")};
+  color: ${(props) => (props.$isSelected ? '#79DAFD' : '#000')};
   font-family: Inter;
   font-size: 20px;
   font-style: normal;
@@ -175,7 +175,7 @@ const InfoText = styled.p`
 `;
 
 const ResponderName = styled.p<{ $isSelected: boolean }>`
-  color: ${(props) => (props.$isSelected ? "#79DAFD" : "#000")};
+  color: ${(props) => (props.$isSelected ? '#79DAFD' : '#000')};
   text-align: center;
   font-family: Inter;
   font-size: 20px;
@@ -213,8 +213,8 @@ const Conference: React.FC = () => {
   const conferenceData = location.state;
   const [addBoolean, setAddBoolean] = useState<boolean>(false);
   const [isOnline, setIsOnline] = useState<boolean>(false);
-  const [title, setTitle] = useState<string>("");
-  const [content, setContent] = useState<string>("");
+  const [title, setTitle] = useState<string>('');
+  const [content, setContent] = useState<string>('');
   const [input, setInput] = useState<boolean>(false);
   const [update, setUpdate] = useState<boolean>(false);
   const [idxR, setIdxR] = useState<number>(-1);
@@ -250,7 +250,7 @@ const Conference: React.FC = () => {
         setContent(response.data.description);
         setTotalRespondCount(response.data.responder_count);
       } catch (error) {
-        console.error("Error fetching info:", error);
+        console.error('Error fetching info:', error);
       }
     };
     getFetch();
@@ -261,7 +261,7 @@ const Conference: React.FC = () => {
       if (!id) return;
       try {
         const response = await axios.get(
-          `${BASE_URL}/conferences/${id}/responses/`
+          `${BASE_URL}/conferences/${id}/responses/`,
         );
         const responderNames = response.data.map((user: any) => [
           user.responder_name,
@@ -270,7 +270,7 @@ const Conference: React.FC = () => {
         setUserSelections(response.data);
         setResponderNames(responderNames);
       } catch (error) {
-        console.error("Error fetching info:", error);
+        console.error('Error fetching info:', error);
       }
     };
     getFetchRespond();
@@ -282,7 +282,7 @@ const Conference: React.FC = () => {
       try {
         console.log(id);
         const response = await axios.get(
-          `${BASE_URL}/conferences/${id}/statistics/`
+          `${BASE_URL}/conferences/${id}/statistics/`,
         );
         console.log(response.data);
         setMostTimeResponder(response.data.most_frequent_respondents);
@@ -299,16 +299,16 @@ const Conference: React.FC = () => {
     try {
       const currentUrl = window.location.href;
       await navigator.clipboard.writeText(currentUrl);
-      alert("클립보드에 복사 완료");
+      alert('클립보드에 복사 완료');
     } catch (e) {
-      alert("복사 불가능한 url입니다.");
+      alert('복사 불가능한 url입니다.');
     }
   };
 
   const handleSave = (
     responder_name: string,
     checked_time: string[],
-    responder_id: number
+    responder_id: number,
   ) => {
     if (responder_id === -1) {
       const userSelection = {
@@ -322,12 +322,12 @@ const Conference: React.FC = () => {
           setAddBoolean(true);
           const response = await axios.post(
             `${BASE_URL}/conferences/${id}/responses/`,
-            userSelection
+            userSelection,
           );
           setAddBoolean(false);
-          alert(responder_name + " 추가 완료");
+          alert(responder_name + ' 추가 완료');
         } catch (error) {
-          console.error("Error fetching info:", error);
+          console.error('Error fetching info:', error);
         }
       };
       PostFetch();
@@ -345,11 +345,11 @@ const Conference: React.FC = () => {
         try {
           const response = await axios.put(
             `${BASE_URL}/conferences/${id}/responses/${responder_id}/`,
-            userSelection
+            userSelection,
           );
-          alert(response.data.responder_name + " 수정 완료");
+          alert(response.data.responder_name + ' 수정 완료');
         } catch (error) {
-          console.error("Error fetching info:", error);
+          console.error('Error fetching info:', error);
         }
       };
       PutFetch();
@@ -381,7 +381,7 @@ const Conference: React.FC = () => {
       setIdxT(-1);
       setUpdate(false);
     } else {
-      alert("응답자를 더 추가할 수 없습니다.");
+      alert('응답자를 더 추가할 수 없습니다.');
     }
   };
 
@@ -394,7 +394,7 @@ const Conference: React.FC = () => {
           <Lable>내용</Lable>
           <Content>{content}</Content>
           <Button onClick={() => handleCopyClipBoard()}>공유하기</Button>
-          <OnOff>{isOnline ? "온라인" : "오프라인"}</OnOff>
+          <OnOff>{isOnline ? '온라인' : '오프라인'}</OnOff>
         </Comment>
         {input ? (
           <Schedule dates={dates} times={times} onSave={handleSave} />
@@ -419,7 +419,7 @@ const Conference: React.FC = () => {
           <MostOfTimeText>가장 많은 시간대</MostOfTimeText>
           {mostFrequentTime.length < 4 || moreTime
             ? mostFrequentTime.map((time, index) => {
-                const [day, first, middle, last] = time.split(" : ");
+                const [day, first, middle, last] = time.split(' : ');
                 const formattedTime = `${day}일 / ${first}:${middle}:${last} / ${mostRespondTimeCount}명`;
                 return (
                   <Time
@@ -432,7 +432,7 @@ const Conference: React.FC = () => {
                 );
               })
             : mostFrequentTime.slice(0, 3).map((time, index) => {
-                const [day, first, middle, last] = time.split(" : ");
+                const [day, first, middle, last] = time.split(' : ');
                 const formattedTime = `${day}일 / ${first}:${middle}:${last} / ${mostRespondTimeCount}명`;
                 return (
                   <Time
@@ -467,7 +467,7 @@ const Conference: React.FC = () => {
                   <ResponderName key={index} $isSelected={false}>
                     {responderName}
                   </ResponderName>
-                )
+                ),
               )
             : responderNames.map((responderName: string, index: number) => (
                 <ResponderName
