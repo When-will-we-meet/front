@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 const Container = styled.div`
-  height: 575px;
-  width: 899px;
+  height: 530px;
+  width: 60%;
   border: 1px solid black;
   display: flex;
   flex-direction: column;
@@ -13,7 +13,7 @@ const Container = styled.div`
 `;
 
 const Wrap = styled.div`
-  width: 898px;
+  width: 100%;
   height: 86px;
   display: flex;
   justify-content: space-evenly;
@@ -34,12 +34,12 @@ const Text = styled.p`
 const DaysContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  padding: 20px;
+  padding: 2%;
   row-gap: 50px;
 `;
 
 const DayBox = styled.div`
-  width: 120px;
+  width: 100%;
   height: 60px;
   color: #000;
   display: flex;

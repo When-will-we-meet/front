@@ -8,7 +8,7 @@ const Container = styled.div`
 `;
 
 const Wrap = styled.div`
-  width: 150px;
+  width: 15%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -18,7 +18,7 @@ const Wrap = styled.div`
 `;
 
 const TimeTable = styled.div`
-  width: 80px;
+  width: 10%;
   display: flex;
   flex-direction: column;
   margin-left: 20px;

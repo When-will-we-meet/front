@@ -77,15 +77,15 @@ const BlockColor = styled.div<{ color: string }>`
 `;
 
 const Button = styled.button`
-  width: 150px;
+  width: 80px;
   height: 30px;
   border-radius: 5px;
   border: 2px solid #d9d9d9;
   color: #000;
   background: #fff;
   position: absolute;
-  bottom: 9.5%;
-  left: 100%;
+  bottom: 8.5%;
+  left: 85%;
   cursor: pointer;
   &:hover {
     background-color: #79dafd;
@@ -212,7 +212,7 @@ const Schedule: React.FC<{
               onChange={(e) => setName(e.target.value)}
             />
           </div>
-          <Button onClick={handleSave}>시간대 추가</Button>
+          <Button onClick={handleSave}>추가</Button>
         </InputWrap>
       </Wrap>
     </Container>

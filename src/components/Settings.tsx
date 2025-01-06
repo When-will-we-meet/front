@@ -10,11 +10,12 @@ const Container = styled.div`
   background: #fff;
   display: flex;
   flex-direction: column;
-  width: 525px;
+  width: 40%;
   height: 700px;
   align-items: center;
   gap: 35px;
   margin-top: 40px;
+  padding-right: 10%;
 `;
 
 const Wrap = styled.div`

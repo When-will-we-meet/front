@@ -16,20 +16,28 @@ const Container = styled.div`
   padding-top: 30px;
 `;
 
-const Wrap = styled.div`
+const WrapLeft = styled.div`
   display: flex;
   flex-direction: column;
+  width: 60%;
+`;
+
+const WrapRight = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 40%;
 `;
 
 const ButtonWrap = styled.div`
   display: flex;
+  justify-content: center;
   margin-top: 120px;
-  margin-left: 177px;
-  gap: 85px;
+  gap: 10%;
 `;
 
 const Comment = styled.div`
-  width: 700px;
+  width: 70%;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -70,7 +78,7 @@ const Content = styled.p`
 `;
 
 const Button = styled.button`
-  width: 150px;
+  width: 25%;
   height: 30px;
   flex-shrink: 0;
   border-radius: 5px;
@@ -85,7 +93,7 @@ const Button = styled.button`
   background: #fff;
   position: absolute;
   top: 33%;
-  left: 100%;
+  right: 0%;
 
   cursor: pointer;
 
@@ -111,12 +119,11 @@ const OnOff = styled.div`
 `;
 
 const MostOfTime = styled.div`
-  width: 600px;
+  width: 50%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-left: 100px;
 `;
 
 const MostOfTimeText = styled.p`
@@ -146,12 +153,11 @@ const Time = styled.p<{ $isSelected: boolean }>`
 `;
 
 const Responder = styled.div`
-  width: 600px;
+  width: 50%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-left: 100px;
   margin-top: 90px;
 `;
 
@@ -188,7 +194,7 @@ const ResponderName = styled.p<{ $isSelected: boolean }>`
 `;
 
 const BottomButton = styled.button`
-  width: 178px;
+  width: 70%;
   height: 58px;
   flex-shrink: 0;
   border-radius: 5px;
@@ -389,7 +395,7 @@ const Conference: React.FC = () => {
 
   return (
     <Container>
-      <Wrap>
+      <WrapLeft>
         <Comment>
           <Lable>제목</Lable>
           <Title>{title}</Title>
@@ -415,8 +421,8 @@ const Conference: React.FC = () => {
             userSelections={userSelections}
           />
         )}
-      </Wrap>
-      <Wrap>
+      </WrapLeft>
+      <WrapRight>
         <MostOfTime>
           <MostOfTimeText>가장 많은 시간대</MostOfTimeText>
           {mostFrequentTime.length < 4 || moreTime
@@ -491,7 +497,7 @@ const Conference: React.FC = () => {
             </BottomButton>
           )}
         </ButtonWrap>
-      </Wrap>
+      </WrapRight>
     </Container>
   );
 };
