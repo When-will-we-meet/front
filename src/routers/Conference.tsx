@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import SelectedTime from 'components/SelectedTime';
 import Schedule from 'components/Schedule';
 import { BASE_URL } from 'components/BASE_URL';
