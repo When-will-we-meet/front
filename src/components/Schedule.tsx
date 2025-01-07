@@ -110,8 +110,8 @@ const Input = styled.input`
 const Schedule: React.FC<{
   dates: number[];
   times: number[];
-  onSave: (name: string, selectedTimes: string[], responder_id: number) => void;
-}> = ({ dates, times, onSave }) => {
+  onAppend: (name: string, selectedTimes: string[]) => void;
+}> = ({ dates, times, onAppend }) => {
   const [name, setName] = useState<string>('');
   const [hours, setHours] = useState<number[]>();
   const [currentlySelecting, setCurrentlySelecting] = useState<string[]>([]);
@@ -158,7 +158,7 @@ const Schedule: React.FC<{
 
   const handleSave = () => {
     if (name && currentlySelecting.length > 0) {
-      onSave(name, currentlySelecting, -1);
+      onAppend(name, currentlySelecting);
     } else {
       alert('이름을 입력하고 시간대를 선택해주세요.');
     }

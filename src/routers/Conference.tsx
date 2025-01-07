@@ -1,13 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import SelectedTime from 'components/SelectedTime';
-import Schedule from 'components/Schedule';
-import { BASE_URL } from 'components/BASE_URL';
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useLocation, useParams } from 'react-router-dom';
 import UpdateTime from 'components/UpdateTime';
+import SelectedTime from 'components/SelectedTime';
+import Schedule from 'components/Schedule';
+import { BASE_URL } from 'components/BASE_URL';
+import Content from 'components/Content';
+import ViewTime from 'components/ViewTime';
+import Responders from 'components/Responders';
 
 const Container = styled.div`
   background: #fff;
@@ -36,163 +39,6 @@ const ButtonWrap = styled.div`
   gap: 10%;
 `;
 
-const Comment = styled.div`
-  width: 70%;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  text-align: left;
-  margin-left: 88px;
-  padding-top: 30px;
-  padding-left: 25px;
-`;
-
-const Lable = styled.p`
-  color: #d9d9d9;
-  font-family: Inter;
-  font-size: 15px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  margin: 0 0 12px 0;
-`;
-
-const Title = styled.p`
-  color: #000;
-  font-family: Inter;
-  font-size: 40px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  margin: 0 0 32px 0;
-`;
-
-const Content = styled.p`
-  color: #717171;
-  font-family: Inter;
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  margin: 0 0 0 0;
-`;
-
-const Button = styled.button`
-  width: 25%;
-  height: 30px;
-  flex-shrink: 0;
-  border-radius: 5px;
-  border: 2px solid #d9d9d9;
-  color: #000;
-  text-align: center;
-  font-family: Inter;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  background: #fff;
-  position: absolute;
-  top: 33%;
-  right: 0%;
-
-  cursor: pointer;
-
-  &:hover {
-    background-color: #79dafd;
-    color: #fff;
-  }
-`;
-
-const OnOff = styled.div`
-  width: 100px;
-  height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 600;
-  color: #000;
-  top: 125%;
-  left: 0.5%;
-`;
-
-const MostOfTime = styled.div`
-  width: 50%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-const MostOfTimeText = styled.p`
-  color: #717171;
-  text-align: center;
-  font-family: Inter;
-  font-size: 30px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  margin: 45px 0 4px 0;
-`;
-
-const MinMax = styled.p`
-  color: #717171;
-  cursor: pointer;
-`;
-
-const Time = styled.p<{ $isSelected: boolean }>`
-  color: ${(props) => (props.$isSelected ? '#79DAFD' : '#000')};
-  font-family: Inter;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  margin: 15px 0 0 0;
-`;
-
-const Responder = styled.div`
-  width: 50%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-top: 90px;
-`;
-
-const ResponderText = styled.p`
-  color: #717171;
-  text-align: center;
-  font-family: Inter;
-  font-size: 25px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-`;
-
-const InfoText = styled.p`
-  color: #717171;
-  text-align: center;
-  font-family: Inter;
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  margin-top: 5px;
-`;
-
-const ResponderName = styled.p<{ $isSelected: boolean }>`
-  color: ${(props) => (props.$isSelected ? '#79DAFD' : '#000')};
-  text-align: center;
-  font-family: Inter;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  margin: 15px 0 0 0;
-`;
-
 const BottomButton = styled.button`
   width: 70%;
   height: 58px;
@@ -219,7 +65,6 @@ const Conference: React.FC = () => {
   const { id: paramId } = useParams();
   const location = useLocation();
   const conferenceData = location.state;
-  const [addBoolean, setAddBoolean] = useState<boolean>(false);
   const [isOnline, setIsOnline] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [content, setContent] = useState<string>('');
@@ -233,9 +78,6 @@ const Conference: React.FC = () => {
   const [times, setTimes] = useState<number[]>([]);
   const [dates, setDates] = useState<number[]>([]);
   const [totalRespondCount, setTotalRespondCount] = useState<number>(0);
-  const [mostRespondTimeCount, setMostRespondTimeCount] = useState<number>(0);
-  const [mostFrequentTime, setMostFrequentTime] = useState<any[]>([]);
-  const [moreTime, setMoreTime] = useState<boolean>(false);
   const [mostTimeResponder, setMostTimeResponder] = useState<any[]>([]);
 
   useEffect(() => {
@@ -244,7 +86,7 @@ const Conference: React.FC = () => {
     } else if (paramId) {
       setId(paramId);
     }
-  }, [conferenceData, paramId]);
+  }, []);
 
   useEffect(() => {
     const getFetch = async () => {
@@ -264,53 +106,27 @@ const Conference: React.FC = () => {
     getFetch();
   }, [id]);
 
-  useEffect(() => {
-    const getFetchRespond = async () => {
-      if (!id) return;
+  const handleAppend = (responder_name: string, checked_time: string[]) => {
+    const userSelection = {
+      conference: Number(id),
+      users: null,
+      responder_name: responder_name,
+      checked_time: checked_time,
+    };
+    const PostFetch = async () => {
       try {
-        const response = await axios.get(
+        const response = await axios.post(
           `${BASE_URL}/conferences/${id}/responses/`,
+          userSelection,
         );
-        const responderNames = response.data.map((user: any) => [
-          user.responder_name,
-          user.id,
-        ]);
-        setUserSelections(response.data);
-        setResponderNames(responderNames);
+        alert(responder_name + ' 추가 완료');
       } catch (error) {
         console.error('Error fetching info:', error);
       }
     };
-    getFetchRespond();
-  }, [id, update, addBoolean]);
-
-  useEffect(() => {
-    const getFetchtatistics = async () => {
-      if (!id) return;
-      try {
-        console.log(id);
-        const response = await axios.get(
-          `${BASE_URL}/conferences/${id}/statistics/`,
-        );
-        console.log(response.data);
-        setMostTimeResponder(response.data.most_frequent_respondents);
-        setMostRespondTimeCount(response.data.total_responses);
-        setMostFrequentTime(response.data.most_frequent_time);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getFetchtatistics();
-  }, [id, update, input]);
-
-  const handleCopyClipBoard = async () => {
-    try {
-      const currentUrl = window.location.href;
-      await navigator.clipboard.writeText(currentUrl);
-      alert('클립보드에 복사 완료');
-    } catch (e) {
-      alert('복사 불가능한 url입니다.');
-    }
+    PostFetch();
+    setUserSelections((prev) => [...prev, userSelection]);
+    setResponderNames((prev) => [...prev, responder_name]);
   };
 
   const handleSave = (
@@ -318,55 +134,29 @@ const Conference: React.FC = () => {
     checked_time: string[],
     responder_id: number,
   ) => {
-    if (responder_id === -1) {
-      const userSelection = {
-        conference: Number(id),
-        users: null,
-        responder_name: responder_name,
-        checked_time: checked_time,
-      };
-      const PostFetch = async () => {
-        try {
-          setAddBoolean(true);
-          const response = await axios.post(
-            `${BASE_URL}/conferences/${id}/responses/`,
-            userSelection,
-          );
-          setAddBoolean(false);
-          alert(responder_name + ' 추가 완료');
-        } catch (error) {
-          console.error('Error fetching info:', error);
-        }
-      };
-      PostFetch();
-      setUserSelections((prev) => [...prev, userSelection]);
-      setResponderNames((prev) => [...prev, responder_name]);
-      console.log(responderNames);
-    } else {
-      const userSelection = {
-        conference: Number(id),
-        users: null,
-        responder_name: responder_name,
-        checked_time: checked_time,
-      };
-      const PutFetch = async () => {
-        try {
-          const response = await axios.put(
-            `${BASE_URL}/conferences/${id}/responses/${responder_id}/`,
-            userSelection,
-          );
-          alert(response.data.responder_name + ' 수정 완료');
-        } catch (error) {
-          console.error('Error fetching info:', error);
-        }
-      };
-      PutFetch();
-    }
+    const userSelection = {
+      conference: Number(id),
+      users: null,
+      responder_name: responder_name,
+      checked_time: checked_time,
+    };
+    const PutFetch = async () => {
+      try {
+        const response = await axios.put(
+          `${BASE_URL}/conferences/${id}/responses/${responder_id}/`,
+          userSelection,
+        );
+        setUpdate(!update);
+        alert(response.data.responder_name + ' 수정 완료');
+      } catch (error) {
+        console.error('Error fetching info:', error);
+      }
+    };
+    PutFetch();
   };
 
   const handleShowResponder = (index: number) => {
     setIdxT(index);
-    console.log(mostTimeResponder);
   };
 
   const handleClickResponder = (index: number) => {
@@ -396,16 +186,9 @@ const Conference: React.FC = () => {
   return (
     <Container>
       <WrapLeft>
-        <Comment>
-          <Lable>제목</Lable>
-          <Title>{title}</Title>
-          <Lable>내용</Lable>
-          <Content>{content}</Content>
-          <Button onClick={() => handleCopyClipBoard()}>공유하기</Button>
-          <OnOff>{isOnline ? '온라인' : '오프라인'}</OnOff>
-        </Comment>
+        <Content title={title} content={content} isOnline={isOnline} />
         {input ? (
-          <Schedule dates={dates} times={times} onSave={handleSave} />
+          <Schedule dates={dates} times={times} onAppend={handleAppend} />
         ) : update ? (
           <UpdateTime
             dates={dates}
@@ -423,70 +206,25 @@ const Conference: React.FC = () => {
         )}
       </WrapLeft>
       <WrapRight>
-        <MostOfTime>
-          <MostOfTimeText>가장 많은 시간대</MostOfTimeText>
-          {mostFrequentTime.length < 4 || moreTime
-            ? mostFrequentTime.map((time, index) => {
-                const [day, first, middle, last] = time.split(' : ');
-                const formattedTime = `${day}일 / ${first}:${middle}:${last} / ${mostRespondTimeCount}명`;
-                return (
-                  <Time
-                    key={index}
-                    $isSelected={idxT === index}
-                    onClick={() => handleShowResponder(index)}
-                  >
-                    {formattedTime}
-                  </Time>
-                );
-              })
-            : mostFrequentTime.slice(0, 3).map((time, index) => {
-                const [day, first, middle, last] = time.split(' : ');
-                const formattedTime = `${day}일 / ${first}:${middle}:${last} / ${mostRespondTimeCount}명`;
-                return (
-                  <Time
-                    key={index}
-                    $isSelected={idxT === index}
-                    onClick={() => handleShowResponder(index)}
-                  >
-                    {formattedTime}
-                  </Time>
-                );
-              })}
-          {mostFrequentTime.length >= 4 ? (
-            !moreTime ? (
-              <MinMax onClick={() => setMoreTime(true)}>더 보기</MinMax>
-            ) : (
-              <MinMax onClick={() => setMoreTime(false)}>간략히 보기</MinMax>
-            )
-          ) : (
-            <></>
-          )}
-        </MostOfTime>
-        <Responder>
-          <ResponderText>응답자</ResponderText>
-          {responderNames.length > 0 ? (
-            <InfoText>#수정을 원하시면 이름을 선택해주세요.</InfoText>
-          ) : (
-            <></>
-          )}
-          {idxT !== -1
-            ? mostTimeResponder[idxT].map(
-                (responderName: string, index: number) => (
-                  <ResponderName key={index} $isSelected={false}>
-                    {responderName}
-                  </ResponderName>
-                ),
-              )
-            : responderNames.map((responderName: string, index: number) => (
-                <ResponderName
-                  key={index}
-                  onClick={() => handleClickResponder(index)}
-                  $isSelected={idxR === index}
-                >
-                  {responderName[0]}
-                </ResponderName>
-              ))}
-        </Responder>
+        <ViewTime
+          id={id}
+          idxT={idxT}
+          handleShowResponder={handleShowResponder}
+          setMostTimeResponder={setMostTimeResponder}
+          update={update}
+          input={input}
+        />
+        <Responders
+          id={id}
+          userSelections={userSelections}
+          setUserSelections={setUserSelections}
+          setResponderNames={setResponderNames}
+          responderNames={responderNames}
+          idxT={idxT}
+          idxR={idxR}
+          handleClickResponder={handleClickResponder}
+          mostTimeResponder={mostTimeResponder}
+        />
         <ButtonWrap>
           <BottomButton onClick={() => handleShowAll()}>전체보기</BottomButton>
           {input ? (
