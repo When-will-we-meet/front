@@ -47,17 +47,15 @@ const ResponderName = styled.p<{ $isSelected: boolean }>`
 
 const Responders: React.FC<{
   id: string | null;
-  userSelections: unknown[];
   setUserSelections: React.Dispatch<React.SetStateAction<unknown[]>>;
-  setResponderNames: React.Dispatch<React.SetStateAction<string[]>>;
-  responderNames: string[];
+  setResponderNames: React.Dispatch<React.SetStateAction<string[][]>>;
+  responderNames: string[][];
   idxT: number;
   idxR: number;
   handleClickResponder: (index: number) => void;
   mostTimeResponder: string[][];
 }> = ({
   id,
-  userSelections,
   setUserSelections,
   setResponderNames,
   responderNames,
@@ -84,7 +82,7 @@ const Responders: React.FC<{
       }
     };
     getFetchRespond();
-  }, [id, userSelections]);
+  }, [id]);
   return (
     <Responder>
       <ResponderText>응답자</ResponderText>
@@ -101,7 +99,7 @@ const Responders: React.FC<{
               </ResponderName>
             ),
           )
-        : responderNames.map((responderName: string, index: number) => (
+        : responderNames.map((responderName: string[], index: number) => (
             <ResponderName
               key={index}
               onClick={() => handleClickResponder(index)}

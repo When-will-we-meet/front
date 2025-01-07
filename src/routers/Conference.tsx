@@ -72,7 +72,7 @@ const Conference: React.FC = () => {
   const [update, setUpdate] = useState<boolean>(false);
   const [idxR, setIdxR] = useState<number>(-1);
   const [idxT, setIdxT] = useState<number>(-1);
-  const [responderNames, setResponderNames] = useState<string[]>([]);
+  const [responderNames, setResponderNames] = useState<string[][]>([]);
   const [userSelections, setUserSelections] = useState<any[]>([]);
   const [id, setId] = useState<string | null>(null);
   const [times, setTimes] = useState<number[]>([]);
@@ -119,6 +119,8 @@ const Conference: React.FC = () => {
           `${BASE_URL}/conferences/${id}/responses/`,
           userSelection,
         );
+        const newResponder: string[] = [responder_name, response.data.id];
+        setResponderNames((prev) => [...prev, newResponder]);
         alert(responder_name + ' 추가 완료');
       } catch (error) {
         console.error('Error fetching info:', error);
@@ -126,7 +128,6 @@ const Conference: React.FC = () => {
     };
     PostFetch();
     setUserSelections((prev) => [...prev, userSelection]);
-    setResponderNames((prev) => [...prev, responder_name]);
   };
 
   const handleSave = (
@@ -216,7 +217,6 @@ const Conference: React.FC = () => {
         />
         <Responders
           id={id}
-          userSelections={userSelections}
           setUserSelections={setUserSelections}
           setResponderNames={setResponderNames}
           responderNames={responderNames}
