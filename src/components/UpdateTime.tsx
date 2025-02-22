@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import styled from 'styled-components';
-import { BASE_URL } from './BASE_URL';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import styled from "styled-components";
+import { BASE_URL } from "./BASE_URL";
 
 const Container = styled.div`
   background: #fff;
@@ -34,6 +34,7 @@ const Time = styled.p`
   font-weight: 400;
   line-height: normal;
   margin: 0 0 22px 0;
+  width: 80px;
 `;
 const CellGrid = styled.div<{ columns: number }>`
   display: grid;
@@ -41,9 +42,10 @@ const CellGrid = styled.div<{ columns: number }>`
   grid-auto-rows: 40px;
   margin-top: 59px;
   margin-left: 10px;
+  overflow-x: auto;
 `;
 const Cell = styled.div<{ isSelected: boolean }>`
-  background-color: ${(props) => (props.isSelected ? '#79DAFD' : '#fff')};
+  background-color: ${(props) => (props.isSelected ? "#79DAFD" : "#fff")};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -67,7 +69,7 @@ const BlockColor = styled.div<{ color: string }>`
   width: 92px;
   height: 12px;
   border: ${(props) =>
-    props.color === '#79DAFD' ? '2px solid #000' : '1px solid #000'};
+    props.color === "#79DAFD" ? "2px solid #000" : "1px solid #000"};
   background: ${(props) => props.color};
 `;
 const Button = styled.button`
@@ -87,7 +89,7 @@ const UpdateTime: React.FC<{
   responderId: string;
   onSave: (name: string, selectedTimes: string[], responder_id: number) => void;
 }> = ({ dates, times, id, responderId, onSave }) => {
-  const [name, setName] = useState<string>('');
+  const [name, setName] = useState<string>("");
   const [hours, setHours] = useState<number[]>([]);
   const [currentlySelecting, setCurrentlySelecting] = useState<string[]>([]);
 
@@ -96,14 +98,14 @@ const UpdateTime: React.FC<{
     const end = times[1];
     const hourArray = Array.from(
       { length: end - start + 1 },
-      (_, index) => start + index,
+      (_, index) => start + index
     );
     setHours(hourArray);
 
     const getFetchtatistics = async () => {
       try {
         const response = await axios.get(
-          `${BASE_URL}/conferences/${id}/responses/${responderId}/`,
+          `${BASE_URL}/conferences/${id}/responses/${responderId}/`
         );
         console.log(response.data);
         setName(response.data.responder_name);
@@ -114,7 +116,7 @@ const UpdateTime: React.FC<{
   }, [times, responderId, id]);
 
   const formatHour = (hour: number): string => {
-    const period = hour < 12 ? '오전' : '오후';
+    const period = hour < 12 ? "오전" : "오후";
     const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
     return `${period} ${formattedHour} : 00`;
   };
@@ -131,7 +133,7 @@ const UpdateTime: React.FC<{
 
     if (currentlySelecting.includes(selectedTime)) {
       setCurrentlySelecting((prev) =>
-        prev.filter((time) => time !== selectedTime),
+        prev.filter((time) => time !== selectedTime)
       );
     } else {
       setCurrentlySelecting((prev) => [...prev, selectedTime]);
@@ -147,15 +149,15 @@ const UpdateTime: React.FC<{
     if (currentlySelecting.length > 0) {
       onSave(name, currentlySelecting, Number(responderId));
     } else {
-      alert('시간대를 선택해주세요.');
+      alert("시간대를 선택해주세요.");
     }
   };
 
   const getBlockColor = (headCount: number) => {
-    if (headCount <= 2) return 'rgba(121, 218, 253, 0.10)';
-    if (headCount <= 4) return 'rgba(121, 218, 253, 0.30)';
-    if (headCount <= 6) return 'rgba(121, 218, 253, 0.70)';
-    return '#79DAFD';
+    if (headCount <= 2) return "rgba(121, 218, 253, 0.10)";
+    if (headCount <= 4) return "rgba(121, 218, 253, 0.30)";
+    if (headCount <= 6) return "rgba(121, 218, 253, 0.70)";
+    return "#79DAFD";
   };
 
   return (

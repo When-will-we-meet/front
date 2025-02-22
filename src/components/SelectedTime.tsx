@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 
 const Container = styled.div`
   background: #fff;
@@ -18,7 +18,7 @@ const Wrap = styled.div`
 `;
 
 const TimeTable = styled.div`
-  width: 10%;
+  width: 30%;
   display: flex;
   flex-direction: column;
   margin-left: 20px;
@@ -34,6 +34,7 @@ const Time = styled.p`
   font-weight: 400;
   line-height: normal;
   margin: 0 0 22px 0;
+  width: 80px;
 `;
 
 const CellGrid = styled.div<{ columns: number }>`
@@ -42,10 +43,11 @@ const CellGrid = styled.div<{ columns: number }>`
   grid-auto-rows: 40px;
   margin-top: 59px;
   margin-left: 10px;
+  overflow-x: auto;
 `;
 
 const Cell = styled.div<{ isSelected: boolean }>`
-  background-color: ${(props) => (props.isSelected ? '#79DAFD' : '#fff')};
+  background-color: ${(props) => (props.isSelected ? "#79DAFD" : "#fff")};
   display: flex;
   border: 1px solid #ddd;
   justify-content: center;
@@ -67,7 +69,7 @@ const BlockColor = styled.div<{ color: string }>`
   width: 92px;
   height: 12px;
   border: ${(props) =>
-    props.color === '#79DAFD' ? '2px solid #000' : '1px solid #D9D9D9'};
+    props.color === "#79DAFD" ? "2px solid #000" : "1px solid #D9D9D9"};
   background: ${(props) => props.color};
 `;
 
@@ -86,30 +88,30 @@ const SelectTime: React.FC<{
     const end = times[1];
     const hourArray = Array.from(
       { length: end - start + 1 },
-      (_, index) => start + index,
+      (_, index) => start + index
     );
     setHours(hourArray);
 
     const aggregated: { date: number; hour: number; count: number }[] = [];
     userSelections.forEach((responder_name) => {
       responder_name.checked_time.forEach((time) => {
-        const [dateStr, timeRange] = time.split(' : ');
+        const [dateStr, timeRange] = time.split(" : ");
         const date = parseInt(dateStr.trim());
         const [startHour] = timeRange
-          .split('~')[0]
+          .split("~")[0]
           .trim()
-          .replace('오전', '')
-          .replace('오후', '')
-          .split(':')
+          .replace("오전", "")
+          .replace("오후", "")
+          .split(":")
           .map((v) => parseInt(v));
 
         const hour =
-          timeRange.includes('오후') && startHour !== 12
+          timeRange.includes("오후") && startHour !== 12
             ? startHour + 12
             : startHour;
 
         const existingEntry = aggregated.find(
-          (entry) => entry.date === date && entry.hour === hour,
+          (entry) => entry.date === date && entry.hour === hour
         );
 
         if (existingEntry) {
@@ -124,16 +126,16 @@ const SelectTime: React.FC<{
   }, [times, userSelections]);
 
   const formatHour = (hour: number): string => {
-    const period = hour < 12 ? '오전' : '오후';
+    const period = hour < 12 ? "오전" : "오후";
     const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
     return `${period} ${formattedHour} : 00`;
   };
 
   const getBlockColor = (count: number): string => {
-    if (count <= 2) return 'rgba(121, 218, 253, 0.10)';
-    if (count <= 4) return 'rgba(121, 218, 253, 0.30)';
-    if (count <= 6) return 'rgba(121, 218, 253, 0.70)';
-    return '#79DAFD';
+    if (count <= 2) return "rgba(121, 218, 253, 0.10)";
+    if (count <= 4) return "rgba(121, 218, 253, 0.30)";
+    if (count <= 6) return "rgba(121, 218, 253, 0.70)";
+    return "#79DAFD";
   };
 
   return (
@@ -150,7 +152,7 @@ const SelectTime: React.FC<{
         {hours?.slice(0, hours.length - 1).map((hour) =>
           dates.map((date) => {
             const entry = aggregatedSelections.find(
-              (selection) => selection.date === date && selection.hour === hour,
+              (selection) => selection.date === date && selection.hour === hour
             );
 
             return (
@@ -158,15 +160,15 @@ const SelectTime: React.FC<{
                 key={`${date}-${hour}`}
                 isSelected={!!entry}
                 style={{
-                  backgroundColor: entry ? getBlockColor(entry.count) : '#fff',
+                  backgroundColor: entry ? getBlockColor(entry.count) : "#fff",
                   border:
                     entry?.count !== undefined && entry?.count >= 7
-                      ? '2px solid #000'
-                      : '1px solid #ddd',
+                      ? "2px solid #000"
+                      : "1px solid #ddd",
                 }}
               ></Cell>
             );
-          }),
+          })
         )}
       </CellGrid>
       <Wrap>

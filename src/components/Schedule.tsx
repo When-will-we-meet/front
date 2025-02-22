@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 
 const Container = styled.div`
   background: #fff;
@@ -35,6 +35,7 @@ const Time = styled.p`
   font-weight: 400;
   line-height: normal;
   margin: 0 0 22px 0;
+  width: 80px;
 `;
 
 const CellGrid = styled.div<{ columns: number }>`
@@ -43,10 +44,11 @@ const CellGrid = styled.div<{ columns: number }>`
   grid-auto-rows: 40px;
   margin-top: 59px;
   margin-left: 10px;
+  overflow-x: auto;
 `;
 
 const Cell = styled.div<{ isBeingSelected: boolean }>`
-  background-color: ${(props) => (props.isBeingSelected ? '#79DAFD' : '#fff')};
+  background-color: ${(props) => (props.isBeingSelected ? "#79DAFD" : "#fff")};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -72,7 +74,7 @@ const BlockColor = styled.div<{ color: string }>`
   width: 92px;
   height: 12px;
   border: ${(props) =>
-    props.color === '#79DAFD' ? '2px solid #000' : '1px solid #D9D9D9'};
+    props.color === "#79DAFD" ? "2px solid #000" : "1px solid #D9D9D9"};
   background: ${(props) => props.color};
 `;
 
@@ -85,7 +87,7 @@ const Button = styled.button`
   background: #fff;
   position: absolute;
   bottom: 8.5%;
-  left: 85%;
+  left: 150%;
   cursor: pointer;
   &:hover {
     background-color: #79dafd;
@@ -112,7 +114,7 @@ const Schedule: React.FC<{
   times: number[];
   onAppend: (name: string, selectedTimes: string[]) => void;
 }> = ({ dates, times, onAppend }) => {
-  const [name, setName] = useState<string>('');
+  const [name, setName] = useState<string>("");
   const [hours, setHours] = useState<number[]>();
   const [currentlySelecting, setCurrentlySelecting] = useState<string[]>([]);
 
@@ -121,13 +123,13 @@ const Schedule: React.FC<{
     const end = times[1];
     const hourArray = Array.from(
       { length: end - start + 1 },
-      (_, index) => start + index,
+      (_, index) => start + index
     );
     setHours(hourArray);
   }, [times]);
 
   const formatHour = (hour: number): string => {
-    const period = hour < 12 ? '오전' : '오후';
+    const period = hour < 12 ? "오전" : "오후";
     const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
     return `${period} ${formattedHour} : 00`;
   };
@@ -144,7 +146,7 @@ const Schedule: React.FC<{
 
     if (currentlySelecting.includes(selectedTime)) {
       setCurrentlySelecting(
-        currentlySelecting.filter((time) => time !== selectedTime),
+        currentlySelecting.filter((time) => time !== selectedTime)
       );
     } else {
       setCurrentlySelecting([...currentlySelecting, selectedTime]);
@@ -160,15 +162,15 @@ const Schedule: React.FC<{
     if (name && currentlySelecting.length > 0) {
       onAppend(name, currentlySelecting);
     } else {
-      alert('이름을 입력하고 시간대를 선택해주세요.');
+      alert("이름을 입력하고 시간대를 선택해주세요.");
     }
   };
 
   const getBlockColor = (headCount: number) => {
-    if (headCount <= 2) return 'rgba(121, 218, 253, 0.10)';
-    if (headCount <= 4) return 'rgba(121, 218, 253, 0.30)';
-    if (headCount <= 6) return 'rgba(121, 218, 253, 0.70)';
-    return '#79DAFD';
+    if (headCount <= 2) return "rgba(121, 218, 253, 0.10)";
+    if (headCount <= 4) return "rgba(121, 218, 253, 0.30)";
+    if (headCount <= 6) return "rgba(121, 218, 253, 0.70)";
+    return "#79DAFD";
   };
 
   return (

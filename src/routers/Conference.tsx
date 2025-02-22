@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from 'axios';
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { useLocation, useParams } from 'react-router-dom';
-import UpdateTime from 'components/UpdateTime';
-import SelectedTime from 'components/SelectedTime';
-import Schedule from 'components/Schedule';
-import { BASE_URL } from 'components/BASE_URL';
-import Content from 'components/Content';
-import ViewTime from 'components/ViewTime';
-import Responders from 'components/Responders';
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
+import { useLocation, useParams } from "react-router-dom";
+import UpdateTime from "components/UpdateTime";
+import SelectedTime from "components/SelectedTime";
+import Schedule from "components/Schedule";
+import { BASE_URL } from "components/BASE_URL";
+import Content from "components/Content";
+import ViewTime from "components/ViewTime";
+import Responders from "components/Responders";
 
 const Container = styled.div`
   background: #fff;
@@ -40,7 +40,7 @@ const ButtonWrap = styled.div`
 `;
 
 const BottomButton = styled.button`
-  width: 70%;
+  width: 50%;
   height: 58px;
   flex-shrink: 0;
   border-radius: 5px;
@@ -66,8 +66,8 @@ const Conference: React.FC = () => {
   const location = useLocation();
   const conferenceData = location.state;
   const [isOnline, setIsOnline] = useState<boolean>(false);
-  const [title, setTitle] = useState<string>('');
-  const [content, setContent] = useState<string>('');
+  const [title, setTitle] = useState<string>("");
+  const [content, setContent] = useState<string>("");
   const [input, setInput] = useState<boolean>(false);
   const [update, setUpdate] = useState<boolean>(false);
   const [idxR, setIdxR] = useState<number>(-1);
@@ -100,7 +100,7 @@ const Conference: React.FC = () => {
         setContent(response.data.description);
         setTotalRespondCount(response.data.responder_count);
       } catch (error) {
-        console.error('Error fetching info:', error);
+        console.error("Error fetching info:", error);
       }
     };
     getFetch();
@@ -117,13 +117,13 @@ const Conference: React.FC = () => {
       try {
         const response = await axios.post(
           `${BASE_URL}/conferences/${id}/responses/`,
-          userSelection,
+          userSelection
         );
         const newResponder: string[] = [responder_name, response.data.id];
         setResponderNames((prev) => [...prev, newResponder]);
-        alert(responder_name + ' 추가 완료');
+        alert(responder_name + " 추가 완료");
       } catch (error) {
-        console.error('Error fetching info:', error);
+        console.error("Error fetching info:", error);
       }
     };
     PostFetch();
@@ -133,7 +133,7 @@ const Conference: React.FC = () => {
   const handleSave = (
     responder_name: string,
     checked_time: string[],
-    responder_id: number,
+    responder_id: number
   ) => {
     const userSelection = {
       conference: Number(id),
@@ -145,12 +145,12 @@ const Conference: React.FC = () => {
       try {
         const response = await axios.put(
           `${BASE_URL}/conferences/${id}/responses/${responder_id}/`,
-          userSelection,
+          userSelection
         );
         setUpdate(!update);
-        alert(response.data.responder_name + ' 수정 완료');
+        alert(response.data.responder_name + " 수정 완료");
       } catch (error) {
-        console.error('Error fetching info:', error);
+        console.error("Error fetching info:", error);
       }
     };
     PutFetch();
@@ -180,7 +180,7 @@ const Conference: React.FC = () => {
       setIdxT(-1);
       setUpdate(false);
     } else {
-      alert('응답자를 더 추가할 수 없습니다.');
+      alert("응답자를 더 추가할 수 없습니다.");
     }
   };
 
