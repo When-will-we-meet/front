@@ -18,7 +18,7 @@ const Wrap = styled.div`
 `;
 
 const TimeTable = styled.div`
-  width: 30%;
+  width: 10%;
   display: flex;
   flex-direction: column;
   margin-left: 20px;
